@@ -10,6 +10,11 @@ An AI-powered VS Code extension for automated web testing and test case generati
 - [Installation](#installation)
 - [Usage](#usage)
 
+## Clone repo
+```bash
+git clone --recurse-submodules https://github.com/code-philia/WebTestPilot.git
+```
+
 ## Prerequisites
 
 - [Google Chrome](https://www.google.com/chrome/) installed locally
@@ -24,7 +29,7 @@ Install Chrome from instructions here [Google Chrome](https://www.google.com/chr
 
 #### Install uv
 Install uv using the following scripts:
-```
+```bash
 # For MacOS
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
