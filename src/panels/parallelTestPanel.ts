@@ -1,20 +1,19 @@
-import { spawn } from 'child_process';
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import assert from 'assert';
+import { ChildProcess } from 'child_process';
 import { Browser, BrowserContext, chromium, Page } from 'playwright-core';
 import * as vscode from 'vscode';
 import { FolderItem, TestItem } from '../models';
-import { loadWebviewHtml } from '../utils/webviewLoader';
-import { WorkspaceRootService } from '../services/workspaceRootService';
-import { parseLogEvents } from '../utils/logParser';
+import { TestEngineService } from '../services/testEngineService';
 import { WebTestPilotTreeDataProvider } from '../treeDataProvider';
-import { EnvironmentService } from '../services/environmentService';
+import { parseLogEvents } from '../utils/logParser';
+import { loadWebviewHtml } from '../utils/webviewLoader';
 
 interface TestExecution {
     testItem: TestItem;
     page: Page;
     targetId: string;
-    pythonProcess: ReturnType<typeof spawn> | null;
+    pythonProcess: ChildProcess | null;
+    engine: TestEngineService | null;
     isRunning: boolean;
     startTime: number;
     endTime?: number;
@@ -147,23 +146,6 @@ export class ParallelTestPanel {
         this._outputChannel.appendLine(`Tests to run: ${tests.length}`);
         this._outputChannel.appendLine('='.repeat(60));
 
-        const workspaceRoot = WorkspaceRootService.getWorkspaceRoot();
-        console.log('Parallel runner using workspace root:', workspaceRoot);
-        
-        // Get configuration
-        // TODO: Hardcoded paths.
-        const cdpEndpoint = vscode.workspace.getConfiguration('webtestpilot').get<string>('cdpEndpoint') || 'http://localhost:9222';
-        const pythonPath = path.join(workspaceRoot, 'WebTestPilot', 'webtestpilot', '.venv', 'bin', 'python');
-        const cliScriptPath = path.join(workspaceRoot, 'WebTestPilot', 'src', 'cli.py');
-        const configPath = path.join(workspaceRoot, 'WebTestPilot', 'src', 'config.yaml');
-
-        // Verify CLI script exists
-        try {
-            await fs.access(cliScriptPath);
-        } catch (error) {
-            vscode.window.showErrorMessage(`Python CLI script not found: ${cliScriptPath}`);
-            return;
-        }
 
         // Start tests sequentially with 2-second delays between each
         this._outputChannel.appendLine('\nStarting tests...');
@@ -180,7 +162,7 @@ export class ParallelTestPanel {
             }
             
             this._outputChannel.appendLine(`Starting test ${index + 1}/${tests.length}: ${test.name}`);
-            await this._startSingleTest(test, pythonPath, cliScriptPath, configPath, cdpEndpoint);
+            await this._startSingleTest(test);
         }
         
         this._outputChannel.appendLine('\nAll test processes started sequentially');
@@ -191,11 +173,7 @@ export class ParallelTestPanel {
      * Starts a single test execution
      */
     private async _startSingleTest(
-        test: TestItem,
-        pythonPath: string,
-        cliScriptPath: string,
-        configPath: string,
-        cdpEndpoint: string
+        test: TestItem
     ) {
         try {
             // Ensure browser context is initialized
@@ -225,6 +203,7 @@ export class ParallelTestPanel {
                 page,
                 targetId: TARGET_ID,
                 pythonProcess: null,
+                engine: null,
                 isRunning: true,
                 startTime: Date.now(),
                 currentStep: 0,
@@ -248,43 +227,22 @@ export class ParallelTestPanel {
                 totalSteps: test.actions ? test.actions.length : 0
             });
 
-            const args = [
-                test.fullPath,
-                '--config', configPath,
-                '--cdp-endpoint', cdpEndpoint,
-                '--target-id', TARGET_ID,
-            ];
-            
-            const fixtureDataProvider = (global as any).webTestPilotFixtureTreeDataProvider as WebTestPilotTreeDataProvider;
-            if (test.fixtureId) {
-                const fixture = fixtureDataProvider?.getFixtureWithId(test.fixtureId);
-                args.push("--fixture-file-path", fixture!.fullPath);
-            }
-        
-            const environmentService = (global as any).environmentService as EnvironmentService;
-            const selectedEnv = environmentService.getSelectedEnvironment();
-            if (selectedEnv) {
-                args.push("--environment-file-path", selectedEnv.fullPath);
-            }
-
-            // Start Python process
-            const pythonProcess = spawn(pythonPath, [
-                cliScriptPath,
-                test.fullPath,
-                ...args
-            ], {
-                env: {
-                    ...process.env,
-                    BAML_LOG: 'info'
-                }
-            });
+            const engine = new TestEngineService();
+            const pythonProcess = await engine.spawnPythonAgent(
+                test,
+                testOutputChannel,
+                ['--target-id', TARGET_ID]
+            );
 
             execution.pythonProcess = pythonProcess;
+            execution.engine = engine;
 
             const testLogs = this._testLogs.get(test.id)!;
 
             let stdoutData = '';
             let stderrData = '';
+
+            assert(pythonProcess.stdout && pythonProcess.stderr, 'Python process stdout is null');
 
             pythonProcess.stdout.on('data', (data: Buffer) => {
                 const text = data.toString();
@@ -305,7 +263,6 @@ export class ParallelTestPanel {
                     timestamp: Date.now()
                 });
             });
-
             pythonProcess.stderr.on('data', (data: Buffer) => {
                 const text = data.toString();
                 stderrData += text;
@@ -591,7 +548,7 @@ export class ParallelTestPanel {
      */
     private _stopTest(testId: string) {
         const execution = this._executions.get(testId);
-        if (execution && execution.isRunning && execution.pythonProcess) {
+        if (execution && execution.isRunning) {
             this._testOutputChannels.get(testId)?.appendLine(`[${execution.testItem.name}] Stopping test...`);
             
             // Stop screenshot streaming for this test
@@ -601,16 +558,10 @@ export class ParallelTestPanel {
                 this._screenshotIntervals.delete(testId);
                 this._testOutputChannels.get(testId)?.appendLine(`[${execution.testItem.name}] Screenshot streaming stopped`);
             }
-            
-            execution.pythonProcess.kill('SIGTERM');
-            
-            setTimeout(() => {
-                if (execution.pythonProcess && !execution.pythonProcess.killed) {
-                    execution.pythonProcess.kill('SIGKILL');
-                }
-                
-                // Keep the page open for inspection - no automatic closing
-            }, 2000);
+
+            assert(execution.engine, 'Test engine is null on stopTest');
+
+            execution.engine.stop();
         }
     }
 

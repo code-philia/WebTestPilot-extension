@@ -28,8 +28,8 @@ export class TestEngineService {
 
     public async spawnPythonAgent(
         testItem: TestItem,
-        cdpEndpoint: string,
-        outputChannel: vscode.OutputChannel
+        outputChannel: vscode.OutputChannel,
+        extraArgs: string[] = []
     ): Promise<ChildProcess> {
     // Fixture file path
         const fixtureDataProvider = (global as any).webTestPilotFixtureTreeDataProvider as any;
@@ -77,6 +77,10 @@ export class TestEngineService {
         }
 
         // Build base args for the CLI
+        const cdpEndpoint = vscode.workspace
+            .getConfiguration('webtestpilot')
+            .get<string>('cdpEndpoint') || 'http://localhost:9222';
+
         const args: string[] = [
             cliScriptPath,
             testItem.fullPath,
@@ -91,6 +95,11 @@ export class TestEngineService {
         }
         if (environmentFilePath) {
             args.push("--environment-file-path", environmentFilePath);
+        }
+
+        // Add extra args if provided (e.g., target-id for parallel tabs)
+        if (extraArgs && extraArgs.length > 0) {
+            args.push(...extraArgs);
         }
 
         outputChannel.appendLine("Executing Python agent...");

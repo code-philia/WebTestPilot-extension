@@ -27,13 +27,14 @@ export class TestRunnerPanel {
 
     private constructor(
         panel: vscode.WebviewPanel,
-        testItem: TestItem,
-        cdpEndpoint: string,
     ) {
         this._panel = panel;
         this._panel.webview.html = this._getHtmlForWebview();
 
         // Connect to CDP and start streaming
+        const cdpEndpoint = vscode.workspace
+            .getConfiguration("webtestpilot")
+            .get<string>("cdpEndpoint") || "http://localhost:9222";
         this._connectToBrowser(cdpEndpoint);
 
         // Listen for when the panel is disposed
@@ -196,10 +197,6 @@ export class TestRunnerPanel {
     ) {
         try {
             const url = testItem.url;
-            const cdpEndpoint =
-        vscode.workspace
-            .getConfiguration("webtestpilot")
-            .get<string>("cdpEndpoint") || "http://localhost:9222";
 
             // Validate test has actions
             console.log(testItem);
@@ -234,9 +231,7 @@ export class TestRunnerPanel {
             );
 
             TestRunnerPanel.currentPanel = new TestRunnerPanel(
-                panel,
-                testItem,
-                cdpEndpoint,
+                panel
             );
 
             // Show progress notification with cancel button
@@ -247,10 +242,9 @@ export class TestRunnerPanel {
                     cancellable: true,
                 },
                 async (progress, token) => {
-                    // Store progress reference for step updates
-                    if (TestRunnerPanel.currentPanel) {
-                        TestRunnerPanel.currentPanel._progress = progress;
-                    }
+                    assert(TestRunnerPanel.currentPanel);
+
+                    TestRunnerPanel.currentPanel._progress = progress;
 
                     // Handle cancellation from notification
                     token.onCancellationRequested(() => {
@@ -260,15 +254,11 @@ export class TestRunnerPanel {
                     progress.report({ message: "Starting Python agent..." });
 
                     const testEngine = new TestEngineService();
-                    // store engine instance so panel can stop it later
-                    if (TestRunnerPanel.currentPanel) {
-                        TestRunnerPanel.currentPanel._testEngine = testEngine;
-                    }
+                    TestRunnerPanel.currentPanel._testEngine = testEngine;
 
                     try {
                         const pythonProcess = await testEngine.spawnPythonAgent(
                             testItem,
-                            cdpEndpoint,
                             outputChannel
                         );
 
@@ -392,7 +382,6 @@ export class TestRunnerPanel {
             console.log("Test execution completed:", {
                 testName: testItem.name,
                 url: url,
-                cdpEndpoint: cdpEndpoint,
                 actionsCount: testItem.actions?.length || 0,
             });
         } catch (error) {
