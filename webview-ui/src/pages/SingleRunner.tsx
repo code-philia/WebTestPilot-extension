@@ -16,10 +16,6 @@ export const SingleRunner: React.FC = () => {
   const [showStop, setShowStop] = useState<boolean>(false);
   const [stopDisabled, setStopDisabled] = useState<boolean>(false);
 
-  const frameCountRef = useRef<number>(0);
-  const lastFpsUpdateRef = useRef<number>(Date.now());
-  const [fps, setFps] = useState<number>(0);
-
   useEffect(() => {
     // Notify extension that webview is ready
     postMessage("ready");
@@ -38,19 +34,6 @@ export const SingleRunner: React.FC = () => {
           if (message.data) {
             setScreenshot("data:image/png;base64," + message.data);
             setLoading(false);
-
-            // FPS
-            frameCountRef.current += 1;
-            const now = Date.now();
-            if (now - lastFpsUpdateRef.current >= 1000) {
-              const fpsVal = Math.round(
-                frameCountRef.current /
-                  ((now - lastFpsUpdateRef.current) / 1000)
-              );
-              setFps(fpsVal);
-              frameCountRef.current = 0;
-              lastFpsUpdateRef.current = now;
-            }
           }
           break;
         case "navigation":
@@ -98,12 +81,13 @@ export const SingleRunner: React.FC = () => {
 
   return (
     <div className="live-browser-root">
-      <div className="header">
+      <div className="flex items-center p-2 w-full">
         <div>
-          <div className="title">
+          <div className="animate-pulse">
             {t`🔴 Live`}
           </div>
           <div className="status">{status}</div>
+          <div>{url}</div>
         </div>
         <div className="controls">
           {showStop && (
@@ -115,7 +99,6 @@ export const SingleRunner: React.FC = () => {
               ⏹️ {stopDisabled ? t`Stopping...` : t`Stop Test`}
             </button>
           )}
-          <div className="url-bar">{url}</div>
         </div>
       </div>
 
@@ -137,13 +120,6 @@ export const SingleRunner: React.FC = () => {
             }}
           />
         )}
-      </div>
-
-      <div className="footer">
-        <span>{footerText}</span>
-        <span style={{ marginLeft: "auto" }}>
-          {fps > 0 ? `${fps} fps` : ""}
-        </span>
       </div>
     </div>
   );
