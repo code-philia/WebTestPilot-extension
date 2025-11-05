@@ -1,3 +1,4 @@
 [submodule "WebTestPilot"]
 	path = WebTestPilot
 	url = https://github.com/code-philia/WebTestPilot.git
+	branch = main
