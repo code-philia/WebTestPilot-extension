@@ -1,11 +1,11 @@
 # Update code
 echo "Updating code repositories..."
-git branch --set-upstream-to=origin/extension
+git branch --set-upstream-to=origin/main
 git pull
 
 # Setup WebTestPilot + BAML
 echo "Setting up WebTestPilot..."
-cd webtestpilot
+cd WebTestPilot/webtestpilot
 uv sync
 source ./.venv/bin/activate
 python3 -V
@@ -13,6 +13,6 @@ uv run baml-cli generate
 
 # Setup webview + extension
 echo "Setting up VS Code extension..."
-cd ..
+cd ../../
 yarn install:all
 yarn package

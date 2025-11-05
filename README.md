@@ -18,7 +18,7 @@ git clone --recurse-submodules https://github.com/code-philia/WebTestPilot.git
 ## Prerequisites
 
 - [Google Chrome](https://www.google.com/chrome/) installed locally
-- Node.js >= 22.12.0
+- Node.js >= 22.9.0
 - Python 3.12
 - uv
 
@@ -65,15 +65,17 @@ sh setup.sh
 2. Open `src/extension.ts` in a new VS Code window.
 3. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and type "Debug: Start Debugging", then select it.
 ![start-debugging](./docs/assets/start-debugging.png)
+4. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and type "Debug: Start Debugging", then select it.
+![choose-debugger-type](./docs/assets/choose-debugger-type.png)
 
-4. In the extension debug window, press `Ctrl+Shift+P` and type "WebTestPilot: Set Workspace...", then select the WebTestPilot folder.
+5. In the extension debug window, press `Ctrl+Shift+P` and type "WebTestPilot: Set Workspace...", then select the WebTestPilot folder.
 ![set-workspace](./docs/assets/set-workspace.png)
 ![choose-workspace](./docs/assets/choose-workspace.png)
 
-5. Click the WebTestPilot extension icon in the sidebar to start using it.
+6. Click the WebTestPilot extension icon in the sidebar to start using it.
 ![extension-icon](./docs/assets/extension-icon.png)
-6. In the debugger window, open a folder in it.
-7. Put the given test cases into .webtestpilot folder of the opened folder in the Extension Development Host window.
+7. In the debugger window, open a folder in it.
+8. Put the given test cases into .webtestpilot folder of the opened folder in the Extension Development Host window.
 ![test-folder](./docs/assets/test-folder.png)
 
 ### In case of updates
