@@ -1,13 +1,8 @@
 import assert from "assert";
-import { spawn } from "child_process";
-import * as fs from "fs/promises";
-import * as path from "path";
 import { chromium, Page } from "playwright-core";
 import * as vscode from "vscode";
 import { TestItem } from "../models";
-import { EnvironmentService } from "../services/environmentService";
-import { WorkspaceRootService } from "../services/workspaceRootService.js";
-import { WebTestPilotTreeDataProvider } from "../treeDataProvider";
+import { TestEngineService } from "../services/testEngineService";
 import { parseLogEvents } from "../utils/logParser";
 import { loadWebviewHtml } from "../utils/webviewLoader";
 
@@ -19,12 +14,10 @@ export class TestRunnerPanel {
     public static currentPanel: TestRunnerPanel | undefined;
     private readonly _panel: vscode.WebviewPanel;
     private _disposables: vscode.Disposable[] = [];
-    private _testItem: TestItem;
     private _browser: any;
     private _page: Page | undefined;
     private _screenshotInterval: NodeJS.Timeout | undefined;
-    private _pythonProcess: any = undefined;
-    private _isTestRunning: boolean = false;
+    private _testEngine: TestEngineService | undefined;
     private _progress:
     | vscode.Progress<{
         message?: string;
@@ -38,7 +31,6 @@ export class TestRunnerPanel {
         cdpEndpoint: string,
     ) {
         this._panel = panel;
-        this._testItem = testItem;
         this._panel.webview.html = this._getHtmlForWebview();
 
         // Connect to CDP and start streaming
@@ -140,21 +132,13 @@ export class TestRunnerPanel {
    * Stops the currently running Python test process
    */
     private _stopTest() {
-        if (this._pythonProcess && this._isTestRunning) {
+        assert(this._testEngine, "Test engine should be defined");
+        if (this._testEngine.isRunning) {
             console.log("Stopping Python test process...");
 
-            // Send SIGTERM to gracefully terminate the process
-            this._pythonProcess.kill("SIGTERM");
-
-            // If it doesn't stop within 2 seconds, force kill it
-            setTimeout(() => {
-                if (this._pythonProcess && !this._pythonProcess.killed) {
-                    console.log("Force killing Python process...");
-                    this._pythonProcess.kill("SIGKILL");
-                }
-            }, 2000);
-
-            this._isTestRunning = false;
+            if (this._testEngine) {
+                this._testEngine.stop();
+            }
 
             // Update UI
             this._panel.webview.postMessage({
@@ -275,106 +259,21 @@ export class TestRunnerPanel {
                     });
                     progress.report({ message: "Starting Python agent..." });
 
-                    // Run the Python CLI to execute the test
-                    const workspaceRoot = WorkspaceRootService.getWorkspaceRoot();
-                    console.log("Using workspace root:", workspaceRoot);
-                    const pythonPath = path.join(
-                        workspaceRoot,
-                        "webtestpilot",
-                        ".venv",
-                        "bin",
-                        "python"
-                    );
-                    const cliScriptPath = path.join(
-                        workspaceRoot,
-                        "webtestpilot",
-                        "src",
-                        "cli.py"
-                    );
-                    const configPath = path.join(
-                        workspaceRoot,
-                        "webtestpilot",
-                        "src",
-                        "config.yaml"
-                    );
-                    const traceOutputPath = path.join(
-                        workspaceRoot,
-                        ".webtestpilot",
-                        "traces",
-                        `${testItem.id}-trace.zip`
-                    );
-
-                    // Ensure traces directory exists
-                    const tracesDir = path.dirname(traceOutputPath);
-                    await fs.mkdir(tracesDir, { recursive: true });
-
-                    outputChannel.appendLine(`Workspace Root: ${workspaceRoot}`);
-                    outputChannel.appendLine(`Python: ${pythonPath}`);
-                    outputChannel.appendLine(`CLI Script: ${cliScriptPath}`);
-                    outputChannel.appendLine(`Config: ${configPath}`);
-                    outputChannel.appendLine(`Trace Output: ${traceOutputPath}`);
-                    outputChannel.appendLine("");
-
-                    // Verify CLI script exists
-                    try {
-                        await fs.access(cliScriptPath);
-                        outputChannel.appendLine("✓ CLI script found");
-                    } catch (error) {
-                        outputChannel.appendLine(
-                            `✗ CLI script NOT FOUND: ${cliScriptPath}`
-                        );
-                        vscode.window.showErrorMessage(
-                            `Python CLI script not found at: ${cliScriptPath}\n\n` +
-                `Make sure you have opened the correct workspace folder.\n` +
-                `Expected workspace: .../WebTestPilot/extension/webtestpilot`
-                        );
-                        throw new Error(`CLI script not found: ${cliScriptPath}`);
+                    const testEngine = new TestEngineService();
+                    // store engine instance so panel can stop it later
+                    if (TestRunnerPanel.currentPanel) {
+                        TestRunnerPanel.currentPanel._testEngine = testEngine;
                     }
 
-                    outputChannel.appendLine("Executing Python agent...");
-                    outputChannel.appendLine("");
-
-                    // Execute Python CLI
                     try {
-                        const args = [
-                            testItem.fullPath,
-                            "--config",
-                            configPath,
-                            "--cdp-endpoint",
+                        const pythonProcess = await testEngine.spawnPythonAgent(
+                            testItem,
                             cdpEndpoint,
-                            "--json-output",
-                        ];
-                        
-                        const fixtureDataProvider = (global as any).webTestPilotFixtureTreeDataProvider as WebTestPilotTreeDataProvider;
-                        if (testItem.fixtureId) {
-                            const fixture = fixtureDataProvider?.getFixtureWithId(testItem.fixtureId);
-                            args.push("--fixture-file-path", fixture!.fullPath);
-                        }
-                    
-                        const environmentService = (global as any).environmentService as EnvironmentService;
-                        const selectedEnv = environmentService.getSelectedEnvironment();
-                        if (selectedEnv) {
-                            args.push("--environment-file-path", selectedEnv.fullPath);
-                        }
-
-                        const pythonProcess = spawn(
-                            pythonPath,
-                            [
-                                cliScriptPath,
-                                ...args,
-                            ],
-                            {
-                                env: {
-                                    ...process.env,
-                                    BAML_LOG: "info",
-                                },
-                            }
+                            outputChannel
                         );
 
                         // Store process reference for cancellation
                         if (TestRunnerPanel.currentPanel) {
-                            TestRunnerPanel.currentPanel._pythonProcess = pythonProcess;
-                            TestRunnerPanel.currentPanel._isTestRunning = true;
 
                             // Update webview to show stop button
                             TestRunnerPanel.currentPanel._panel.webview.postMessage({
@@ -384,6 +283,8 @@ export class TestRunnerPanel {
 
                         let stdoutData = "";
                         let stderrData = "";
+
+                        assert(!!pythonProcess.stdout && !!pythonProcess.stderr);
 
                         pythonProcess.stdout.on("data", (data: Buffer) => {
                             const text = data.toString();
@@ -404,8 +305,6 @@ export class TestRunnerPanel {
                             pythonProcess.on("close", (code: number, signal: string) => {
                                 // Clear running state
                                 if (TestRunnerPanel.currentPanel) {
-                                    TestRunnerPanel.currentPanel._isTestRunning = false;
-                                    TestRunnerPanel.currentPanel._pythonProcess = undefined;
 
                                     // Update webview
                                     TestRunnerPanel.currentPanel._panel.webview.postMessage({
@@ -431,40 +330,13 @@ export class TestRunnerPanel {
                                         "✅ Test execution completed successfully!"
                                     );
 
-                                    // Try to parse JSON result
-                                    try {
-                                        const jsonMatch = stdoutData.match(/\{[\s\S]*\}/);
-                                        if (jsonMatch) {
-                                            const result = JSON.parse(jsonMatch[0]);
-                                            outputChannel.appendLine("");
-                                            outputChannel.appendLine("Test Results:");
-                                            outputChannel.appendLine(`  Success: ${result.success}`);
-                                            outputChannel.appendLine(
-                                                `  Steps Executed: ${result.steps_executed || 0}`
-                                            );
-                                            if (result.errors && result.errors.length > 0) {
-                                                outputChannel.appendLine(
-                                                    `  Errors: ${result.errors.join(", ")}`
-                                                );
-                                            }
-                                        }
-                                    } catch (e) {
-                                        // Ignore JSON parse errors
-                                    }
-
                                     vscode.window
                                         .showInformationMessage(
                                             `✅ Test "${testItem.name}" PASSED - All steps completed successfully!`,
-                                            "View Trace",
                                             "View Output"
                                         )
                                         .then((selection) => {
-                                            if (selection === "View Trace") {
-                                                vscode.commands.executeCommand(
-                                                    "vscode.open",
-                                                    vscode.Uri.file(traceOutputPath)
-                                                );
-                                            } else if (selection === "View Output") {
+                                            if (selection === "View Output") {
                                                 outputChannel.show();
                                             }
                                         });
@@ -602,9 +474,9 @@ export class TestRunnerPanel {
         this._progress = undefined;
 
         // Stop any running test
-        if (this._pythonProcess && this._isTestRunning) {
-            console.log("Killing Python process on dispose");
-            this._pythonProcess.kill("SIGTERM");
+        if (this._testEngine?.isRunning) {
+            console.log("Stopping Python process on dispose");
+            this._testEngine.stop();
         }
 
         // Stop screenshot streaming

@@ -153,9 +153,9 @@ export class ParallelTestPanel {
         // Get configuration
         // TODO: Hardcoded paths.
         const cdpEndpoint = vscode.workspace.getConfiguration('webtestpilot').get<string>('cdpEndpoint') || 'http://localhost:9222';
-        const pythonPath = path.join(workspaceRoot, 'webtestpilot', '.venv', 'bin', 'python');
-        const cliScriptPath = path.join(workspaceRoot, 'webtestpilot', 'src', 'cli.py');
-        const configPath = path.join(workspaceRoot, 'webtestpilot', 'src', 'config.yaml');
+        const pythonPath = path.join(workspaceRoot, 'WebTestPilot', 'webtestpilot', '.venv', 'bin', 'python');
+        const cliScriptPath = path.join(workspaceRoot, 'WebTestPilot', 'src', 'cli.py');
+        const configPath = path.join(workspaceRoot, 'WebTestPilot', 'src', 'config.yaml');
 
         // Verify CLI script exists
         try {
@@ -253,7 +253,6 @@ export class ParallelTestPanel {
                 '--config', configPath,
                 '--cdp-endpoint', cdpEndpoint,
                 '--target-id', TARGET_ID,
-                '--json-output'
             ];
             
             const fixtureDataProvider = (global as any).webTestPilotFixtureTreeDataProvider as WebTestPilotTreeDataProvider;
