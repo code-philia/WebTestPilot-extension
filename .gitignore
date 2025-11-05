@@ -1,0 +1,27 @@
+# Build
+__pycache__/
+*.py[oc]
+build/
+wheels/
+*.egg-info
+dist/
+
+# Envs
+.venv
+.env
+*venv*
+
+# Tools
+.vscode
+*.DS_Store
+.aider*
+.ruff_cache/
+.mypy_cache
+*/*/node_modules/*
+node_modules
+.webtestpilot
+
+# Devs
+archive
+media
+screenshots

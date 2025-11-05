@@ -1,0 +1,334 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-11-01 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/pages/SingleRunner.tsx:82
+msgid "🔴 Disconnected"
+msgstr "🔴 Disconnected"
+
+#: src/pages/SingleRunner.tsx:104
+msgid "🔴 Live"
+msgstr "🔴 Live"
+
+#: src/pages/SingleRunner.tsx:32
+msgid "🟢 Connected"
+msgstr "🟢 Connected"
+
+#: src/components/ActionList.tsx:59
+msgid "Action"
+msgstr "Action"
+
+#: src/components/ActionList.tsx:32
+msgid "Actions"
+msgstr "Actions"
+
+#: src/components/ActionList.tsx:34
+msgid "Add Action"
+msgstr "Add Action"
+
+#: src/pages/EnvironmentEditor.tsx:207
+msgid "Add Variable"
+msgstr "Add Variable"
+
+#: src/components/TestCard.tsx:82
+msgid "Browser Tab:"
+msgstr "Browser Tab:"
+
+#: src/pages/TestEditor.tsx:169
+msgid "Cannot run test: No actions defined. Please add test actions before running."
+msgstr "Cannot run test: No actions defined. Please add test actions before running."
+
+#: src/pages/TestEditor.tsx:180
+msgid "Cannot run test: Some actions are empty. Please fill in all action descriptions."
+msgstr "Cannot run test: Some actions are empty. Please fill in all action descriptions."
+
+#: src/pages/ParallelRunner.tsx:269
+msgid "Clear All Tabs"
+msgstr "Clear All Tabs"
+
+#: src/pages/ParallelRunner.tsx:307
+#~ msgid "Clear Finished"
+#~ msgstr "Clear Finished"
+
+#: src/pages/EnvironmentEditor.tsx:178
+#: src/pages/FixtureEditor.tsx:143
+#: src/pages/TestEditor.tsx:204
+msgid "Close"
+msgstr "Close"
+
+#: src/pages/ParallelRunner.tsx:49
+msgid "Connected to browser ✓"
+msgstr "Connected to browser ✓"
+
+#: src/pages/ParallelRunner.tsx:14
+#: src/pages/SingleRunner.tsx:9
+msgid "Connecting to browser..."
+msgstr "Connecting to browser..."
+
+#: src/pages/SingleRunner.tsx:125
+msgid "Connecting to remote browser..."
+msgstr "Connecting to remote browser..."
+
+#: src/pages/SingleRunner.tsx:81
+msgid "Connection failed"
+msgstr "Connection failed"
+
+#: src/components/TestCard.tsx:93
+msgid "Duration:"
+msgstr "Duration:"
+
+#: src/pages/EnvironmentEditor.tsx:68
+#: src/pages/EnvironmentEditor.tsx:171
+msgid "Edit Environment"
+msgstr "Edit Environment"
+
+#. placeholder {0}: environmentData.name
+#: src/pages/EnvironmentEditor.tsx:67
+#: src/pages/EnvironmentEditor.tsx:170
+msgid "Edit Environment: {0}"
+msgstr "Edit Environment: {0}"
+
+#: src/pages/FixtureEditor.tsx:69
+#: src/pages/FixtureEditor.tsx:136
+msgid "Edit Fixture"
+msgstr "Edit Fixture"
+
+#. placeholder {0}: fixtureData.name
+#: src/pages/FixtureEditor.tsx:68
+#: src/pages/FixtureEditor.tsx:136
+msgid "Edit Fixture: {0}"
+msgstr "Edit Fixture: {0}"
+
+#: src/pages/TestEditor.tsx:88
+#: src/pages/TestEditor.tsx:194
+msgid "Edit Test"
+msgstr "Edit Test"
+
+#. placeholder {0}: testData.name
+#: src/pages/TestEditor.tsx:87
+#: src/pages/TestEditor.tsx:194
+msgid "Edit Test: {0}"
+msgstr "Edit Test: {0}"
+
+#: src/pages/EnvironmentEditor.tsx:185
+msgid "Environment Name"
+msgstr "Environment Name"
+
+#: src/pages/EnvironmentEditor.tsx:156
+msgid "Environment name is required"
+msgstr "Environment name is required"
+
+#: src/pages/EnvironmentEditor.tsx:205
+msgid "Environment Variables"
+msgstr "Environment Variables"
+
+#: src/components/ActionList.tsx:88
+msgid "Expected result"
+msgstr "Expected result"
+
+#: src/components/TestSummary.tsx:34
+msgid "Failed"
+msgstr "Failed"
+
+#: src/pages/TestEditor.tsx:237
+msgid "Fixture"
+msgstr "Fixture"
+
+#: src/pages/FixtureEditor.tsx:150
+msgid "Fixture Name"
+msgstr "Fixture Name"
+
+#: src/pages/FixtureEditor.tsx:124
+msgid "Fixture name is required"
+msgstr "Fixture name is required"
+
+#: src/components/ActionList.tsx:32
+msgid "From fixture"
+msgstr "From fixture"
+
+#: src/components/TestCard.tsx:128
+#~ msgid "Hide"
+#~ msgstr "Hide"
+
+#: src/pages/TestEditor.tsx:231
+msgid "https://example.com"
+msgstr "https://example.com"
+
+#: src/pages/SingleRunner.tsx:132
+msgid "Live screenshot"
+msgstr "Live screenshot"
+
+#: src/pages/ParallelRunner.tsx:253
+msgid "Loading..."
+msgstr "Loading..."
+
+#: src/components/TestCard.tsx:128
+#~ msgid "Logs"
+#~ msgstr "Logs"
+
+#: src/pages/EnvironmentEditor.tsx:192
+msgid "My Environment"
+msgstr "My Environment"
+
+#: src/pages/FixtureEditor.tsx:157
+msgid "My Fixture"
+msgstr "My Fixture"
+
+#: src/pages/TestEditor.tsx:218
+msgid "My Test"
+msgstr "My Test"
+
+#: src/components/ActionList.tsx:41
+msgid "No actions defined in fixtures."
+msgstr "No actions defined in fixtures."
+
+#: src/components/ActionList.tsx:42
+msgid "No actions defined. Click \"Add Action\" to get started."
+msgstr "No actions defined. Click \"Add Action\" to get started."
+
+#: src/pages/TestEditor.tsx:244
+msgid "No Fixture"
+msgstr "No Fixture"
+
+#: src/pages/EnvironmentEditor.tsx:223
+msgid "No variables defined. Click \"Add Variable\" to create one."
+msgstr "No variables defined. Click \"Add Variable\" to create one."
+
+#: src/App.tsx:61
+#~ msgid "Page \"{page}\" not found"
+#~ msgstr "Page \"{page}\" not found"
+
+#: src/pages/ParallelRunner.tsx:253
+msgid "Parallel Tests:"
+msgstr "Parallel Tests:"
+
+#: src/components/TestSummary.tsx:30
+msgid "Passed"
+msgstr "Passed"
+
+#: src/pages/EnvironmentEditor.tsx:258
+msgid "Remove variable"
+msgstr "Remove variable"
+
+#: src/pages/TestEditor.tsx:201
+msgid "Run Test"
+msgstr "Run Test"
+
+#: src/components/TestSummary.tsx:26
+msgid "Running"
+msgstr "Running"
+
+#: src/pages/EnvironmentEditor.tsx:175
+msgid "Save Environment"
+msgstr "Save Environment"
+
+#: src/pages/FixtureEditor.tsx:140
+msgid "Save Fixture"
+msgstr "Save Fixture"
+
+#: src/pages/TestEditor.tsx:198
+msgid "Save Test"
+msgstr "Save Test"
+
+#: src/components/TestCard.tsx:128
+#~ msgid "Show"
+#~ msgstr "Show"
+
+#: src/components/TestCard.tsx:90
+msgid "Steps:"
+msgstr "Steps:"
+
+#: src/components/TestCard.tsx:119
+msgid "Stop"
+msgstr "Stop"
+
+#: src/pages/ParallelRunner.tsx:266
+msgid "Stop All Tests"
+msgstr "Stop All Tests"
+
+#: src/pages/SingleRunner.tsx:115
+msgid "Stop Test"
+msgstr "Stop Test"
+
+#: src/components/TestSummary.tsx:38
+msgid "Stopped"
+msgstr "Stopped"
+
+#: src/pages/SingleRunner.tsx:115
+msgid "Stopping..."
+msgstr "Stopping..."
+
+#: src/pages/SingleRunner.tsx:35
+msgid "Streaming live from remote browser"
+msgstr "Streaming live from remote browser"
+
+#: src/components/TestCard.tsx:96
+msgid "Tab #"
+msgstr "Tab #"
+
+#: src/pages/SingleRunner.tsx:72
+msgid "Test finished"
+msgstr "Test finished"
+
+#: src/pages/TestEditor.tsx:211
+msgid "Test Name"
+msgstr "Test Name"
+
+#: src/pages/TestEditor.tsx:157
+msgid "Test name is required"
+msgstr "Test name is required"
+
+#: src/pages/SingleRunner.tsx:67
+msgid "Test running... Click Stop to cancel"
+msgstr "Test running... Click Stop to cancel"
+
+#: src/pages/SingleRunner.tsx:77
+msgid "Test stopped by user"
+msgstr "Test stopped by user"
+
+#: src/components/TestSummary.tsx:22
+msgid "Total Tests"
+msgstr "Total Tests"
+
+#: src/App.tsx:60
+#~ msgid "Unknown Page"
+#~ msgstr "Unknown Page"
+
+#: src/pages/TestEditor.tsx:224
+msgid "URL"
+msgstr "URL"
+
+#: src/pages/EnvironmentEditor.tsx:251
+msgid "value"
+msgstr "value"
+
+#: src/pages/EnvironmentEditor.tsx:215
+msgid "Value"
+msgstr "Value"
+
+#: src/pages/EnvironmentEditor.tsx:214
+msgid "Variable"
+msgstr "Variable"
+
+#: src/pages/EnvironmentEditor.tsx:240
+msgid "VARIABLE_NAME"
+msgstr "VARIABLE_NAME"
+
+#: src/components/TestCard.tsx:126
+msgid "View Full Logs"
+msgstr "View Full Logs"
+
+#: src/pages/SingleRunner.tsx:12
+msgid "Waiting for connection..."
+msgstr "Waiting for connection..."

@@ -1,0 +1,229 @@
+{
+  "name": "webtestpilot",
+  "displayName": "WebTestPilot",
+  "description": "",
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.100.0",
+    "node": ">=22.12.0"
+  },
+  "categories": [
+    "Other",
+    "Testing",
+    "AI"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "install:all": "yarn && cd webview-ui && yarn",
+    "start:webview": "cd webview-ui && yarn start",
+    "build:webview": "cd webview-ui && yarn build",
+    "vscode:prepublish": "yarn build:webview && yarn package",
+    "compile": "yarn check-types && yarn lint && node esbuild.js",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "yarn build:webview && yarn  check-types && yarn lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "yarn compile-tests && yarn compile && yarn lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "dependencies": {
+    "playwright-core": "^1.40.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.105.0",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.25.10",
+    "eslint": "^9.36.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "webtestpilot.createFixture",
+        "title": "New Fixture",
+        "icon": "$(add)"
+      },
+      {
+        "command": "webtestpilot.createEnvironment",
+        "title": "New Environment",
+        "icon": "$(add)"
+      },
+      {
+        "command": "webtestpilot.createTest",
+        "title": "New Test",
+        "icon": "$(debug-start)"
+      },
+      {
+        "command": "webtestpilot.createFolder",
+        "title": "New Folder",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "webtestpilot.addTestCase",
+        "title": "Add Test Case",
+        "icon": "$(add)"
+      },
+      {
+        "command": "webtestpilot.createTestRoot",
+        "title": "New Test",
+        "icon": "$(add)"
+      },
+      {
+        "command": "webtestpilot.createFolderRoot",
+        "title": "New Folder",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "webtestpilot.addFolder",
+        "title": "Add Folder",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "webtestpilot.runFolder",
+        "title": "Run All Tests",
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "webtestpilot.deleteItem",
+        "title": "Delete",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "webtestpilot.openTest",
+        "title": "Open Test"
+      },
+      {
+        "command": "webtestpilot.runTest",
+        "title": "Run Test",
+        "icon": "$(play)"
+      },
+      {
+        "command": "webtestpilot.setWorkspaceRoot",
+        "title": "WebTestPilot: Set Workspace Root"
+      },
+      {
+        "command": "webtestpilot.showWorkspaceRoot",
+        "title": "WebTestPilot: Show Workspace Root"
+      }
+    ],
+    "views": {
+      "webtestpilot": [
+        {
+          "id": "webtestpilot.treeView",
+          "name": "Tests",
+          "icon": "beaker"
+        },
+        {
+          "id": "webtestpilot.treeFixtureView",
+          "name": "Fixtures",
+          "icon": "file-code"
+        },
+        {
+          "id": "webtestpilot.treeEnvironmentView",
+          "name": "Environments",
+          "icon": "server"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "webtestpilot",
+          "title": "WebTestPilot",
+          "icon": "assets/activity-bar-logo.svg"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "webtestpilot.createFolderRoot",
+          "when": "view == webtestpilot.treeView",
+          "group": "navigation"
+        },
+        {
+          "command": "webtestpilot.createTestRoot",
+          "when": "view == webtestpilot.treeView",
+          "group": "navigation"
+        },
+        {
+          "command": "webtestpilot.createFixture",
+          "when": "view == webtestpilot.treeFixtureView",
+          "group": "navigation"
+        },
+        {
+          "command": "webtestpilot.createEnvironment",
+          "when": "view == webtestpilot.treeEnvironmentView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "webtestpilot.addTestCase",
+          "when": "(view == webtestpilot.treeView) && viewItem == folder",
+          "group": "inline@1"
+        },
+        {
+          "command": "webtestpilot.addFolder",
+          "when": "(view == webtestpilot.treeView) && viewItem == folder",
+          "group": "inline@2"
+        },
+        {
+          "command": "webtestpilot.deleteItem",
+          "when": "view == webtestpilot.treeView",
+          "group": "inline@3"
+        },
+        {
+          "command": "webtestpilot.runFolder",
+          "when": "(view == webtestpilot.treeView) && viewItem == folder",
+          "group": "inline@4"
+        },
+        {
+          "command": "webtestpilot.runTest",
+          "when": "(view == webtestpilot.treeView) && viewItem == test",
+          "group": "inline@2"
+        },
+        {
+          "command": "webtestpilot.deleteItem",
+          "when": "view == webtestpilot.treeFixtureView || view == webtestpilot.treeEnvironmentView",
+          "group": "inline@1"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "webtestpilot.treeView",
+        "contents": "No WebTestPilot items found. [Create a test](command:webtestpilot.createTestRoot) or [create a folder](command:webtestpilot.createFolderRoot) to get started."
+      },
+      {
+        "view": "webtestpilot.treeFixtureView",
+        "contents": "No fixtures found."
+      },
+      {
+        "view": "webtestpilot.treeEnvironmentView",
+        "contents": "No environments items found."
+      }
+    ],
+    "configuration": {
+      "title": "WebTestPilot",
+      "properties": {
+        "webtestpilot.workspaceRoot": {
+          "type": "string",
+          "default": "",
+          "description": "Root directory of the WebTestPilot workspace.",
+          "order": 0
+        }
+      }
+    }
+  }
+}

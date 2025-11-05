@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "Node16",
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "dom",
+      "dom.iterable"
+    ],
+    "sourceMap": true,
+    "rootDir": "src",
+    "strict": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+		"jsxImportSource": "preact"
+  },
+  "include": [
+    "src",
+    "node_modules/playwright-core/types"
+  ]
+}
