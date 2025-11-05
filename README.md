@@ -17,7 +17,7 @@ An AI-powered VS Code extension for automated web testing and test case generati
 - Python 3.12
 - uv
 
-### 2. Setup WebTestPilot Runtime
+## Setup WebTestPilot Runtime
 
 #### Install Chrome
 Install Chrome from instructions here [Google Chrome](https://www.google.com/chrome/).
