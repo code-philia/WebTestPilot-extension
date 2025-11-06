@@ -253,11 +253,11 @@ export const EnvironmentEditor: React.FC = () => {
                     </td>
                     <td>
                       <VSCodeButton
-                        appearance="icon"
+                        appearance="primary"
                         onClick={() => handleRemoveVariable(key)}
                         aria-label={t`Remove variable`}
                       >
-                        <span className="codicon codicon-trash"></span>
+                        {t`Delete`}
                       </VSCodeButton>
                     </td>
                   </tr>

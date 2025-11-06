@@ -13,27 +13,27 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/SingleRunner.tsx:82
+#: src/pages/SingleRunner.tsx:65
 msgid "🔴 Disconnected"
 msgstr "🔴 已断开连接"
 
-#: src/pages/SingleRunner.tsx:104
+#: src/pages/SingleRunner.tsx:87
 msgid "🔴 Live"
 msgstr "🔴 直播"
 
-#: src/pages/SingleRunner.tsx:32
+#: src/pages/SingleRunner.tsx:28
 msgid "🟢 Connected"
 msgstr "🟢 已连接"
 
-#: src/components/ActionList.tsx:59
+#: src/components/ActionList.tsx:66
 msgid "Action"
 msgstr "操作"
 
-#: src/components/ActionList.tsx:32
+#: src/components/ActionList.tsx:33
 msgid "Actions"
 msgstr "操作"
 
-#: src/components/ActionList.tsx:34
+#: src/components/ActionList.tsx:40
 msgid "Add Action"
 msgstr "添加操作"
 
@@ -45,11 +45,11 @@ msgstr "添加变量"
 msgid "Browser Tab:"
 msgstr "浏览器标签页："
 
-#: src/pages/TestEditor.tsx:169
+#: src/pages/TestEditor.tsx:177
 msgid "Cannot run test: No actions defined. Please add test actions before running."
 msgstr "无法运行测试：未定义任何操作。请先添加测试操作。"
 
-#: src/pages/TestEditor.tsx:180
+#: src/pages/TestEditor.tsx:188
 msgid "Cannot run test: Some actions are empty. Please fill in all action descriptions."
 msgstr "无法运行测试：存在空的操作。请填写所有操作描述。"
 
@@ -63,7 +63,7 @@ msgstr "清除所有标签页"
 
 #: src/pages/EnvironmentEditor.tsx:178
 #: src/pages/FixtureEditor.tsx:143
-#: src/pages/TestEditor.tsx:204
+#: src/pages/TestEditor.tsx:210
 msgid "Close"
 msgstr "关闭"
 
@@ -76,13 +76,17 @@ msgstr "已连接到浏览器 ✓"
 msgid "Connecting to browser..."
 msgstr "正在连接到浏览器…"
 
-#: src/pages/SingleRunner.tsx:125
+#: src/pages/SingleRunner.tsx:108
 msgid "Connecting to remote browser..."
 msgstr "正在连接到远程浏览器…"
 
-#: src/pages/SingleRunner.tsx:81
+#: src/pages/SingleRunner.tsx:64
 msgid "Connection failed"
 msgstr "连接失败"
+
+#: src/pages/EnvironmentEditor.tsx:260
+msgid "Delete"
+msgstr "删除"
 
 #: src/components/TestCard.tsx:93
 msgid "Duration:"
@@ -110,14 +114,14 @@ msgstr "编辑夹具"
 msgid "Edit Fixture: {0}"
 msgstr "编辑夹具：{0}"
 
-#: src/pages/TestEditor.tsx:88
-#: src/pages/TestEditor.tsx:194
+#: src/pages/TestEditor.tsx:91
+#: src/pages/TestEditor.tsx:200
 msgid "Edit Test"
 msgstr "编辑测试"
 
 #. placeholder {0}: testData.name
-#: src/pages/TestEditor.tsx:87
-#: src/pages/TestEditor.tsx:194
+#: src/pages/TestEditor.tsx:90
+#: src/pages/TestEditor.tsx:200
 msgid "Edit Test: {0}"
 msgstr "编辑测试：{0}"
 
@@ -133,7 +137,7 @@ msgstr "环境名称为必填项"
 msgid "Environment Variables"
 msgstr "环境变量"
 
-#: src/components/ActionList.tsx:88
+#: src/components/ActionList.tsx:95
 msgid "Expected result"
 msgstr "预期结果"
 
@@ -141,7 +145,7 @@ msgstr "预期结果"
 msgid "Failed"
 msgstr "失败"
 
-#: src/pages/TestEditor.tsx:237
+#: src/pages/TestEditor.tsx:243
 msgid "Fixture"
 msgstr "夹具"
 
@@ -153,19 +157,19 @@ msgstr "夹具名称"
 msgid "Fixture name is required"
 msgstr "夹具名称为必填项"
 
-#: src/components/ActionList.tsx:32
+#: src/components/ActionList.tsx:33
 msgid "From fixture"
 msgstr "来自夹具"
 
-#: src/components/TestCard.tsx:128
-#~ msgid "Hide"
-#~ msgstr "隐藏"
+#: src/components/ActionList.tsx:37
+msgid "Hide"
+msgstr "隐藏"
 
-#: src/pages/TestEditor.tsx:231
+#: src/pages/TestEditor.tsx:237
 msgid "https://example.com"
 msgstr "https://example.com"
 
-#: src/pages/SingleRunner.tsx:132
+#: src/pages/SingleRunner.tsx:115
 msgid "Live screenshot"
 msgstr "实时截图"
 
@@ -185,19 +189,19 @@ msgstr "我的环境"
 msgid "My Fixture"
 msgstr "我的夹具"
 
-#: src/pages/TestEditor.tsx:218
+#: src/pages/TestEditor.tsx:224
 msgid "My Test"
 msgstr "我的测试"
 
-#: src/components/ActionList.tsx:41
+#: src/components/ActionList.tsx:48
 msgid "No actions defined in fixtures."
 msgstr "夹具中未定义任何操作。"
 
-#: src/components/ActionList.tsx:42
+#: src/components/ActionList.tsx:49
 msgid "No actions defined. Click \"Add Action\" to get started."
 msgstr "未定义任何操作。点击“添加操作”开始。"
 
-#: src/pages/TestEditor.tsx:244
+#: src/pages/TestEditor.tsx:250
 msgid "No Fixture"
 msgstr "无夹具"
 
@@ -221,7 +225,7 @@ msgstr "通过"
 msgid "Remove variable"
 msgstr "移除变量"
 
-#: src/pages/TestEditor.tsx:201
+#: src/pages/TestEditor.tsx:207
 msgid "Run Test"
 msgstr "运行测试"
 
@@ -237,13 +241,13 @@ msgstr "保存环境"
 msgid "Save Fixture"
 msgstr "保存夹具"
 
-#: src/pages/TestEditor.tsx:198
+#: src/pages/TestEditor.tsx:204
 msgid "Save Test"
 msgstr "保存测试"
 
-#: src/components/TestCard.tsx:128
-#~ msgid "Show"
-#~ msgstr "显示"
+#: src/components/ActionList.tsx:37
+msgid "Show"
+msgstr "显示"
 
 #: src/components/TestCard.tsx:90
 msgid "Steps:"
@@ -257,7 +261,7 @@ msgstr "停止"
 msgid "Stop All Tests"
 msgstr "停止所有测试"
 
-#: src/pages/SingleRunner.tsx:115
+#: src/pages/SingleRunner.tsx:99
 msgid "Stop Test"
 msgstr "停止测试"
 
@@ -265,11 +269,11 @@ msgstr "停止测试"
 msgid "Stopped"
 msgstr "已停止"
 
-#: src/pages/SingleRunner.tsx:115
+#: src/pages/SingleRunner.tsx:99
 msgid "Stopping..."
 msgstr "正在停止…"
 
-#: src/pages/SingleRunner.tsx:35
+#: src/pages/SingleRunner.tsx:31
 msgid "Streaming live from remote browser"
 msgstr "正在从远程浏览器进行实时流"
 
@@ -277,23 +281,23 @@ msgstr "正在从远程浏览器进行实时流"
 msgid "Tab #"
 msgstr "标签页 #"
 
-#: src/pages/SingleRunner.tsx:72
+#: src/pages/SingleRunner.tsx:55
 msgid "Test finished"
 msgstr "测试完成"
 
-#: src/pages/TestEditor.tsx:211
+#: src/pages/TestEditor.tsx:217
 msgid "Test Name"
 msgstr "测试名称"
 
-#: src/pages/TestEditor.tsx:157
+#: src/pages/TestEditor.tsx:165
 msgid "Test name is required"
 msgstr "测试名称为必填项"
 
-#: src/pages/SingleRunner.tsx:67
+#: src/pages/SingleRunner.tsx:50
 msgid "Test running... Click Stop to cancel"
 msgstr "测试正在运行… 点击停止以取消"
 
-#: src/pages/SingleRunner.tsx:77
+#: src/pages/SingleRunner.tsx:60
 msgid "Test stopped by user"
 msgstr "测试被用户停止"
 
@@ -305,7 +309,7 @@ msgstr "测试总数"
 #~ msgid "Unknown Page"
 #~ msgstr "未知页面"
 
-#: src/pages/TestEditor.tsx:224
+#: src/pages/TestEditor.tsx:230
 msgid "URL"
 msgstr "URL"
 
