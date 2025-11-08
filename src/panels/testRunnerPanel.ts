@@ -84,10 +84,6 @@ export class TestRunnerPanel {
 
             assert(this._page, "Failed to get or create a page in the browser");
 
-            vscode.window.showInformationMessage(
-                `Connected to browser! Streaming live view...`
-            );
-
             // Send initial info
             this._panel.webview.postMessage({
                 type: "connected",
@@ -103,7 +99,7 @@ export class TestRunnerPanel {
                 });
             });
 
-            // Listen to page navigation
+            // Changes to url, reflect in webview
             this._page.on("framenavigated", (frame: any) => {
                 assert(this._page, "Page should be defined");
 
@@ -279,7 +275,7 @@ export class TestRunnerPanel {
                         pythonProcess.stdout.on("data", (data: Buffer) => {
                             const text = data.toString();
                             stdoutData += text;
-                            outputChannel.append(text);
+                            outputChannel.append(text);``;
 
                             // Parse step information from logs
                             TestRunnerPanel.currentPanel?._parseStepUpdates(text);

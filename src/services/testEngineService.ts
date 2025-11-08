@@ -31,7 +31,6 @@ export class TestEngineService {
         outputChannel: vscode.OutputChannel,
         extraArgs: string[] = []
     ): Promise<ChildProcess> {
-    // Fixture file path
         const fixtureDataProvider = (global as any).webTestPilotFixtureTreeDataProvider as any;
         let fixtureFilePath: string | undefined;
         if (testItem.fixtureId) {
