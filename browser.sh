@@ -31,6 +31,8 @@ echo "Starting Chrome in full screen with profile $PROFILE_DIR..."
     --disable-translate \
     --disable-features=TranslateUI,Translate \
     --force-device-scale-factor=1 \
+    --disable-geolocation \
+    --use-fake-ui-for-media-stream \
     --window-size=${WINDOW_SIZE} \
     > /tmp/chrome.log 2>&1 &
 

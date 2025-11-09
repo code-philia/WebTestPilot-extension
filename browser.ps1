@@ -54,6 +54,8 @@ $chromeArgs = @(
     '--disable-translate',
     '--disable-features=TranslateUI,Translate',
     '--force-device-scale-factor=1',
+    '--disable-geolocation',
+    '--use-fake-ui-for-media-stream',
     "--window-size=$windowSize",
     '--start-fullscreen',
     '--enable-logging',
