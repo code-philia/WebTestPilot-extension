@@ -1,5 +1,6 @@
 import assert from "assert";
-import { chromium, Page } from "playwright-core";
+import { Browser, BrowserContext, chromium, Page } from "playwright-core";
+
 import * as vscode from "vscode";
 import { TestItem } from "../models";
 import { TestEngineService } from "../services/testEngineService";
@@ -14,7 +15,8 @@ export class TestRunnerPanel {
     public static currentPanel: TestRunnerPanel | undefined;
     private readonly _panel: vscode.WebviewPanel;
     private _disposables: vscode.Disposable[] = [];
-    private _browser: any;
+    private _browser: Browser | undefined;
+    private _context: BrowserContext | undefined;
     private _page: Page | undefined;
     private _targetId: string | undefined;
     private _screenshotInterval: NodeJS.Timeout | undefined;
@@ -69,8 +71,8 @@ export class TestRunnerPanel {
     }
 
     /**
-    * Connects to the remote browser via CDP and starts screenshot streaming
-    */
+     * Connects to the remote browser via CDP and starts screenshot streaming
+     */
     private async _connectToBrowser(cdpEndpoint: string) {
         try {
             // Connect to CDP
@@ -78,11 +80,13 @@ export class TestRunnerPanel {
 
             // Get the first available context or create a new one
             const contexts = this._browser.contexts();
-            const context =
-        contexts.length > 0 ? contexts[0] : await this._browser.newContext();
+            this._context = contexts.length > 0 ? contexts[0] : await this._browser.newContext({
+                viewport: { width: 1920, height: 1080 },
+                deviceScaleFactor: 1
+            });
             
             // Always create a new page for each test run
-            this._page = await context.newPage();
+            this._page = await this._context.newPage();
             
             assert(this._page, "Failed to create a new page in the browser");
             
@@ -133,8 +137,8 @@ export class TestRunnerPanel {
     }
 
     /**
-   * Stops the currently running Python test process
-   */
+    * Stops the currently running Python test process
+    */
     private _stopTest() {
         assert(this._testEngine, "Test engine should be defined");
         if (this._testEngine.isRunning) {
@@ -154,8 +158,8 @@ export class TestRunnerPanel {
     }
 
     /**
-   * Starts periodic screenshot capture and streaming to webview
-   */
+    * Starts periodic screenshot capture and streaming to webview
+    */
     private _startScreenshotStream() {
         if (this._screenshotInterval) {
             clearInterval(this._screenshotInterval);
@@ -193,10 +197,10 @@ export class TestRunnerPanel {
     }
 
     /**
-   * Opens a test in a live browser viewer with CDP connection and runs the Python agent
-   * @param testItem The test to run
-   * @param workspaceRoot The workspace root path
-   */
+    * Opens a test in a live browser viewer with CDP connection and runs the Python agent
+    * @param testItem The test to run
+    * @param workspaceRoot The workspace root path
+    */
     public static async createOrShow(
         testItem: TestItem,
     ) {
@@ -211,13 +215,6 @@ export class TestRunnerPanel {
                 );
                 return;
             }
-
-            // Create output channel for test execution logs
-            const outputChannel = vscode.window.createOutputChannel(
-                "WebTestPilot Test Runner"
-            );
-            outputChannel.clear();
-            outputChannel.show(true);
 
             // If we already have a panel, dispose it and create a new one
             if (TestRunnerPanel.currentPanel) {
@@ -239,156 +236,11 @@ export class TestRunnerPanel {
                 panel
             );
 
-            // Show progress notification with cancel button
-            await vscode.window.withProgress(
-                {
-                    location: vscode.ProgressLocation.Notification,
-                    title: `Running test: ${testItem.name}`,
-                    cancellable: true,
-                },
-                async (progress, token) => {
-                    assert(TestRunnerPanel.currentPanel);
+            // Wait for browser connection to be established and targetId to be available
+            await TestRunnerPanel.currentPanel._waitForTargetId();
 
-                    TestRunnerPanel.currentPanel._progress = progress;
-
-                    // Handle cancellation from notification
-                    token.onCancellationRequested(() => {
-                        console.log("Test cancelled from notification");
-                        TestRunnerPanel.currentPanel?._stopTest();
-                    });
-
-                    const testEngine = new TestEngineService();
-                    TestRunnerPanel.currentPanel._testEngine = testEngine;
-
-                    try {
-                        // Ensure we have a target ID before starting the test
-                        const targetId = TestRunnerPanel.currentPanel._targetId;
-                        if (!targetId) {
-                            throw new Error("Target ID not available - browser page not properly initialized");
-                        }
-                        
-                        const pythonProcess = await testEngine.spawnPythonAgent(
-                            testItem,
-                            outputChannel,
-                            targetId
-                        );
-
-                        // Store process reference for cancellation
-                        if (TestRunnerPanel.currentPanel) {
-
-                            // Update webview to show stop button
-                            TestRunnerPanel.currentPanel._panel.webview.postMessage({
-                                type: "testStarted",
-                            });
-                        }
-
-                        let stdoutData = "";
-                        let stderrData = "";
-
-                        assert(!!pythonProcess.stdout && !!pythonProcess.stderr);
-
-                        pythonProcess.stdout.on("data", (data: Buffer) => {
-                            const text = data.toString();
-                            stdoutData += text;
-                            outputChannel.append(text);``;
-
-                            // Parse step information from logs
-                            TestRunnerPanel.currentPanel?._parseStepUpdates(text);
-                        });
-
-                        pythonProcess.stderr.on("data", (data: Buffer) => {
-                            const text = data.toString();
-                            stderrData += text;
-                            outputChannel.append(`${text}`);
-                        });
-
-                        await new Promise<void>((resolve, reject) => {
-                            pythonProcess.on("close", (code: number, signal: string) => {
-                                // Clear running state
-                                if (TestRunnerPanel.currentPanel) {
-
-                                    // Update webview
-                                    TestRunnerPanel.currentPanel._panel.webview.postMessage({
-                                        type: "testFinished",
-                                    });
-                                }
-
-                                outputChannel.appendLine("");
-                                outputChannel.appendLine("=".repeat(60));
-
-                                // Check if process was terminated by signal (user stopped it)
-                                if (signal === "SIGTERM" || signal === "SIGKILL") {
-                                    outputChannel.appendLine(
-                                        "⚠️  Test execution stopped by user"
-                                    );
-                                    outputChannel.appendLine("=".repeat(60));
-                                    resolve();
-                                    return;
-                                }
-
-                                if (code === 0) {
-                                    outputChannel.appendLine(
-                                        "✅ Test execution completed successfully!"
-                                    );
-
-                                    vscode.window
-                                        .showInformationMessage(
-                                            `✅ Test "${testItem.name}" PASSED - All steps completed successfully!`,
-                                            "View Output"
-                                        )
-                                        .then((selection) => {
-                                            if (selection === "View Output") {
-                                                outputChannel.show();
-                                            }
-                                        });
-
-                                    resolve();
-                                } else {
-                                    outputChannel.appendLine(
-                                        `❌ Test execution failed with exit code: ${code}`
-                                    );
-                                    vscode.window
-                                        .showErrorMessage(
-                                            `❌ Test "${testItem.name}" FAILED - Check output for details.`,
-                                            "View Output"
-                                        )
-                                        .then((selection) => {
-                                            if (selection === "View Output") {
-                                                outputChannel.show();
-                                            }
-                                        });
-
-                                    reject(new Error(`Python process exited with code ${code}`));
-                                }
-
-                                outputChannel.appendLine("=".repeat(60));
-                            });
-
-                            pythonProcess.on("error", (error: Error) => {
-                                outputChannel.appendLine("");
-                                outputChannel.appendLine(
-                                    `❌ Failed to start Python process: ${error.message}`
-                                );
-                                vscode.window
-                                    .showErrorMessage(
-                                        `Failed to run test: ${error.message}`,
-                                        "View Output"
-                                    )
-                                    .then((selection) => {
-                                        if (selection === "View Output") {
-                                            outputChannel.show();
-                                        }
-                                    });
-                                reject(error);
-                            });
-                        });
-                    } catch (error) {
-                        outputChannel.appendLine("");
-                        outputChannel.appendLine(`❌ Error: ${error}`);
-                        throw error;
-                    }
-                }
-            );
+            // Run the test using the instance method
+            await TestRunnerPanel.currentPanel._runTest(testItem);
 
             console.log("Test execution completed:", {
                 testName: testItem.name,
@@ -402,8 +254,173 @@ export class TestRunnerPanel {
     }
 
     /**
-   * Gets the HTML content for the webview
-   */
+     * Wait for targetId to be available after browser connection
+     */
+    private async _waitForTargetId(): Promise<void> {
+        const maxWaitTime = 10000; // 10 seconds
+        const checkInterval = 100; // 100ms
+        let elapsed = 0;
+
+        while (!this._targetId && elapsed < maxWaitTime) {
+            await new Promise(resolve => setTimeout(resolve, checkInterval));
+            elapsed += checkInterval;
+        }
+
+        if (!this._targetId) {
+            throw new Error("Failed to establish browser connection and get target ID");
+        }
+    }
+
+    /**
+     * Internal method to run the test using the instance's targetId
+     */
+    private async _runTest(testItem: TestItem): Promise<void> {
+        // Create output channel for test execution logs
+        const outputChannel = vscode.window.createOutputChannel(
+            "WebTestPilot Test Runner"
+        );
+        outputChannel.clear();
+        outputChannel.show(true);
+
+        // Show progress notification with cancel button
+        await vscode.window.withProgress(
+            {
+                location: vscode.ProgressLocation.Notification,
+                title: `Running test: ${testItem.name}`,
+                cancellable: true,
+            },
+            async (progress, token) => {
+                this._progress = progress;
+
+                // Handle cancellation from notification
+                token.onCancellationRequested(() => {
+                    console.log("Test cancelled from notification");
+                    this._stopTest();
+                });
+
+                const testEngine = new TestEngineService();
+                this._testEngine = testEngine;
+
+                try {
+                    const pythonProcess = await testEngine.spawnPythonAgent(
+                        testItem,
+                        outputChannel,
+                        this._targetId!
+                    );
+
+                    // Update webview to show stop button
+                    this._panel.webview.postMessage({
+                        type: "testStarted",
+                    });
+
+                    let stdoutData = "";
+                    let stderrData = "";
+
+                    assert(!!pythonProcess.stdout && !!pythonProcess.stderr);
+
+                    pythonProcess.stdout.on("data", (data: Buffer) => {
+                        const text = data.toString();
+                        stdoutData += text;
+                        outputChannel.append(text);
+
+                        // Parse step information from logs
+                        this._parseStepUpdates(text);
+                    });
+
+                    pythonProcess.stderr.on("data", (data: Buffer) => {
+                        const text = data.toString();
+                        stderrData += text;
+                        outputChannel.append(`${text}`);
+                    });
+
+                    await new Promise<void>((resolve, reject) => {
+                        pythonProcess.on("close", (code: number, signal: string) => {
+                            // Update webview
+                            this._panel.webview.postMessage({
+                                type: "testFinished",
+                            });
+
+                            outputChannel.appendLine("");
+                            outputChannel.appendLine("=".repeat(60));
+
+                            // Check if process was terminated by signal (user stopped it)
+                            if (signal === "SIGTERM" || signal === "SIGKILL") {
+                                outputChannel.appendLine(
+                                    "⚠️  Test execution stopped by user"
+                                );
+                                outputChannel.appendLine("=".repeat(60));
+                                resolve();
+                                return;
+                            }
+
+                            if (code === 0) {
+                                outputChannel.appendLine(
+                                    "✅ Test execution completed successfully!"
+                                );
+
+                                vscode.window
+                                    .showInformationMessage(
+                                        `✅ Test "${testItem.name}" PASSED - All steps completed successfully!`,
+                                        "View Output"
+                                    )
+                                    .then((selection) => {
+                                        if (selection === "View Output") {
+                                            outputChannel.show();
+                                        }
+                                    });
+
+                                resolve();
+                            } else {
+                                outputChannel.appendLine(
+                                    `❌ Test execution failed with exit code: ${code}`
+                                );
+                                vscode.window
+                                    .showErrorMessage(
+                                        `❌ Test "${testItem.name}" FAILED - Check output for details.`,
+                                        "View Output"
+                                    )
+                                    .then((selection) => {
+                                        if (selection === "View Output") {
+                                            outputChannel.show();
+                                        }
+                                    });
+
+                                reject(new Error(`Python process exited with code ${code}`));
+                            }
+
+                            outputChannel.appendLine("=".repeat(60));
+                        });
+
+                        pythonProcess.on("error", (error: Error) => {
+                            outputChannel.appendLine("");
+                            outputChannel.appendLine(
+                                `❌ Failed to start Python process: ${error.message}`
+                            );
+                            vscode.window
+                                .showErrorMessage(
+                                    `Failed to run test: ${error.message}`,
+                                    "View Output"
+                                )
+                                .then((selection) => {
+                                    if (selection === "View Output") {
+                                        outputChannel.show();
+                                    }
+                                });
+                            reject(error);
+                        });
+                    });
+                } catch (error) {
+                    outputChannel.appendLine("");
+                    outputChannel.appendLine(`❌ Error: ${error}`);
+                    throw error;
+                }
+            }
+        );
+    }
+
+    /**
+    * Gets the HTML content for the webview
+    */
     private _getHtmlForWebview(): string {
         return loadWebviewHtml(
             this._panel.webview,
@@ -412,8 +429,8 @@ export class TestRunnerPanel {
     }
 
     /**
-   * Parse step updates from Python process output
-   */
+    * Parse step updates from Python process output
+    */
     private _parseStepUpdates(text: string) {
         assert(this._progress, "Progress object should be defined");
 
@@ -465,8 +482,8 @@ export class TestRunnerPanel {
     }
 
     /**
-   * Disposes the panel and cleans up resources
-   */
+    * Disposes the panel and cleans up resources
+    */
     public dispose() {
         TestRunnerPanel.currentPanel = undefined;
 
