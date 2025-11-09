@@ -15,6 +15,9 @@ An AI-powered VS Code extension for automated web testing and test case generati
 git clone --recurse-submodules https://github.com/code-philia/WebTestPilot-extension.git
 ```
 
+Note: In case you cloned it normally, run the following to update:
+```bash
+
 ## Prerequisites
 
 - [Google Chrome](https://www.google.com/chrome/) installed locally
