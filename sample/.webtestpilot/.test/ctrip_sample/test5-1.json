@@ -1,18 +1,18 @@
 {
-  "id": "test_mhqfli2n_0.fgb0k69wdte11",
-  "name": "(View Profile) 查看个人信息",
+  "id": "test_mhqfli6c_0.ctg6jkt4uen",
+  "name": "View profile",
   "url": "${CTRIP_URL}",
-  "fixtureId": "fixture_mhqkipi9_0.hj9zkx0weyq",
+  "fixtureId": "",
   "actions": [
     {
-      "action": "在首页右上角点击“尊贵的...”标志",
+      "action": "Click  'Honored user' logo at the top-right of the home page",
       "expectedResult": ""
     },
     {
-      "action": "侧边栏点击个人信息-我的信息",
-      "expectedResult": "展示用户个人信息页面，包括手机号、邮箱、姓名、昵称"
+      "action": "In the sidebar click 'Personal info' - 'My info'",
+      "expectedResult": "Display the user profile page including phone, email, name, nickname"
     }
   ],
   "createdAt": "2025-10-25T06:19:05.681Z",
-  "updatedAt": "2025-11-09T01:38:39.813Z"
+  "updatedAt": "2025-11-09T05:27:49.904Z"
 }

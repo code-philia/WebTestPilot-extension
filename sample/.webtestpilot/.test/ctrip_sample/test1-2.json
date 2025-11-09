@@ -1,29 +1,29 @@
 {
-  "id": "test_mhqfli17_0.oy0l0c3kwt10",
-  "name": "(Login) 账号密码登录",
+  "id": "test_mhqfli2t_0.eoi1nd6hwhd",
+  "name": "Account password login",
   "url": "${CTRIP_URL}",
   "actions": [
     {
-      "action": "首页点击“登录”",
+      "action": "Click 'Login' on the home page",
       "expectedResult": ""
     },
     {
-      "action": "“国内手机号”输入框输入${CTRIP_PHONE_NUMBER}",
+      "action": "Enter ${CTRIP_PHONE_NUMBER} in the 'Mainland phone number' input",
       "expectedResult": ""
     },
     {
-      "action": "“登录密码”输入框输入“${CTRIP_PASSWORD}”",
+      "action": "Enter ${CTRIP_PASSWORD} in the 'Login password' input",
       "expectedResult": ""
     },
     {
-      "action": "勾选“同意服务条款”复选框",
+      "action": "Tick checkbox on agree terms of services",
       "expectedResult": ""
     },
     {
-      "action": "点击深橙色的“登录”按钮",
-      "expectedResult": "提示登录成功，返回首页"
+      "action": "Click 'Login' button with color dark orange",
+      "expectedResult": "Login succeeds and returns to the home page"
     }
   ],
   "createdAt": "2025-10-25T06:19:05.681Z",
-  "updatedAt": "2025-11-09T01:51:53.347Z"
+  "updatedAt": "2025-11-09T01:50:34.349Z"
 }

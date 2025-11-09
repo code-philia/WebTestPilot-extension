@@ -1,46 +1,46 @@
 {
-  "id": "test_mhqfli1v_0.vgw3bgr25v10",
-  "name": "(Search Flight) 查询航班",
+  "id": "test_mhqfli5s_0.xdaddgjihk",
+  "name": "Search flights",
   "url": "${CTRIP_URL}",
   "fixtureId": "",
   "actions": [
     {
-      "action": "首页侧边栏点击“机票”",
+      "action": "In the sidebar click 'Flights'",
+      "expectedResult": "Navigate to the flight search page"
+    },
+    {
+      "action": "Tick the type of 1 one way flight",
       "expectedResult": ""
     },
     {
-      "action": "点击出发地点",
+      "action": "Click on departure point picker",
       "expectedResult": ""
     },
     {
-      "action": "输入出发地'上海 (SHA)'",
+      "action": "Choose origin 'Shanghai (SHA)'",
       "expectedResult": ""
     },
     {
-      "action": "点击目的地",
+      "action": "Click on destination point picker",
       "expectedResult": ""
     },
     {
-      "action": "输入目的地'北京 (BJS)'",
+      "action": "Choose destination 'Beijing (BJS)'",
       "expectedResult": ""
     },
     {
-      "action": "点击出发日期选择器",
+      "action": "Click on departure date picker",
       "expectedResult": ""
     },
     {
-      "action": "选择 2025 年 12 月 15 日作为出发日期",
+      "action": "Select departure date on date, 15 under December and 2025",
       "expectedResult": ""
     },
     {
-      "action": "再次点击 2025 年 12 月 15 日以确认",
-      "expectedResult": ""
-    },
-    {
-      "action": "点击“搜索”",
-      "expectedResult": "显示出发地为上海、目的地为北京、出发日期为2025-12-15的航班列表"
+      "action": "Click 'Search'",
+      "expectedResult": "Show flight list: origin Shanghai, destination Beijing, date 2025-12-15"
     }
   ],
   "createdAt": "2025-10-25T06:19:05.681Z",
-  "updatedAt": "2025-11-09T04:36:22.198Z"
+  "updatedAt": "2025-11-09T02:10:02.156Z"
 }
