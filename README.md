@@ -12,7 +12,7 @@ An AI-powered VS Code extension for automated web testing and test case generati
 
 ## Clone repo
 ```bash
-git clone --recurse-submodules https://github.com/code-philia/WebTestPilot.git
+git clone --recurse-submodules https://github.com/code-philia/WebTestPilot-extension.git
 ```
 
 ## Prerequisites
