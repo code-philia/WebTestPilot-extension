@@ -7,7 +7,7 @@ An AI-powered VS Code extension for automated web testing and test case generati
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
-- [Installation](#installation)
+- [Installation](#setup)
 - [Usage](#usage)
 
 ## Clone repo
@@ -20,12 +20,8 @@ git clone --recurse-submodules https://github.com/code-philia/WebTestPilot-exten
 - [Google Chrome](https://www.google.com/chrome/) installed locally
 - Node.js >= 22.9.0
 - Python 3.12
-- uv
 
-## Setup WebTestPilot Runtime
-
-#### Install Chrome
-Install Chrome from instructions here [Google Chrome](https://www.google.com/chrome/).
+## Setup
 
 #### Install uv
 Install uv using the following scripts:
@@ -42,12 +38,8 @@ uv
 
 For more details, refer to [original uv document](https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1).
 
-### Setup Extension
+#### Setup Extension
 ```bash
-# Node 22
-nvm install lts/jod
-nvm use lts/jod
-
 # If don't have yarn
 npm install --global yarn
 
@@ -55,33 +47,37 @@ npm install --global yarn
 source setup.sh
 
 # Windows
-sh setup.sh
+powershell -ExecutionPolicy Bypass -File setup.ps1
 ```
 
 ## Usage
-### Get seed data
-```bash
-cp -r sample/.webtestpilot ./.webtestpilot
-```
+#### Start the Development Server
+1. Start chrome browser instance: 
+``` bash
+# MacOS / Linux / WSL
+source browser.sh
 
-### Start the Development Server
-1. Start chrome browser instance: ```source browser.sh```
-2. Open `src/extension.ts` in a new VS Code window.
-3. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and type "Debug: Start Debugging", then select it.
+# Windows
+powershell -ExecutionPolicy Bypass -File browser.ps1
+```
+2. Open file `src/extension.ts`.
+3. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and search for command: "Debug: Start Debugging", click it and choose "VS Code Extension Development".
 ![start-debugging](./docs/assets/start-debugging.png)
-4. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and type "Debug: Start Debugging", then select it.
 ![choose-debugger-type](./docs/assets/choose-debugger-type.png)
 
-5. In the extension debug window, open the WebTestPilot-extension folder inside it.
-6. Press `Ctrl+Shift+P` and type "WebTestPilot: Set Workspace...", then select the WebTestPilot folder.
+#### Open the Testcase Folder
+1. In the extension debug window (with the title of "[Extention Development Host]"), open the sample folder inside the WebTestPilot-extension folder.
+2. Press `Ctrl+Shift+P` and type "WebTestPilot: Set Workspace...", then select the WebTestPilot-extension folder.
 ![set-workspace](./docs/assets/set-workspace.png)
 ![choose-workspace](./docs/assets/choose-workspace.png)
 
-7. Click the WebTestPilot extension icon in the sidebar to start using it.
+#### Run and Add Testcase
+1. Click the WebTestPilot extension icon in the sidebar.
 ![extension-icon](./docs/assets/extension-icon.png)
-8. In the debugger window, open a folder in it.
-9. Put the given test cases into .webtestpilot folder of the opened folder in the Extension Development Host window.
-![test-folder](./docs/assets/test-folder.png)
+2. Click "Run test" to run single test.
+![extension-icon](./docs/assets/run-test.png)
+3. Write your own testcases in json format in the `sample` folder.
+
 
 ### In case of updates
 When there are updates to the code base, run the following command and then restart the extension.
