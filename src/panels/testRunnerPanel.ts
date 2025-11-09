@@ -162,7 +162,7 @@ export class TestRunnerPanel {
             try {
                 const imgBuffer = await this._page.screenshot({
                     type: "png",
-                    fullPage: true,
+                    fullPage: false,
                     scale: "device",
                     timeout: 5000,
                 });
