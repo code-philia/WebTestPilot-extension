@@ -17,6 +17,9 @@ git clone --recurse-submodules https://github.com/code-philia/WebTestPilot-exten
 
 Note: In case you cloned it normally, run the following to update:
 ```bash
+git submodule sync --recursive
+git submodule update --init --recursive
+```
 
 ## Prerequisites
 
@@ -25,6 +28,13 @@ Note: In case you cloned it normally, run the following to update:
 - Python 3.12
 
 ## Setup
+#### Setup environement variables
+```bash
+# Copy sample .env file
+cp .env.example .env
+
+# Input the API key to .env ...
+```
 
 #### Install uv
 Install uv using the following scripts:
