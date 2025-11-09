@@ -240,10 +240,7 @@ export class FileSystemService {
         };
 
         try {
-            // Write to a temporary file first, then rename to avoid corruption
-            const tempFilePath = filePath + '.tmp';
-            await fs.writeFile(tempFilePath, JSON.stringify(testContent, null, 2), 'utf-8');
-            await fs.rename(tempFilePath, filePath);
+            await fs.writeFile(filePath, JSON.stringify(testContent, null, 2), 'utf-8');
         } catch (error) {
             console.error('Failed to write test file:', error);
             throw error;
@@ -260,10 +257,7 @@ export class FileSystemService {
         };
 
         try {
-            // Write to a temporary file first, then rename to avoid corruption
-            const tempFilePath = filePath + '.tmp';
-            await fs.writeFile(tempFilePath, JSON.stringify(fixtureContent, null, 2), 'utf-8');
-            await fs.rename(tempFilePath, filePath);
+            await fs.writeFile(filePath, JSON.stringify(fixtureContent, null, 2), 'utf-8');
         } catch (error) {
             console.error('Failed to write fixture file:', error);
             throw error;
@@ -305,10 +299,7 @@ export class FileSystemService {
         };
 
         try {
-            // Write to a temporary file first, then rename to avoid corruption
-            const tempFilePath = filePath + '.tmp';
-            await fs.writeFile(tempFilePath, JSON.stringify(environmentContent, null, 2), 'utf-8');
-            await fs.rename(tempFilePath, filePath);
+            await fs.writeFile(filePath, JSON.stringify(environmentContent, null, 2), 'utf-8');
         } catch (error) {
             console.error('Failed to write environment file:', error);
             throw error;
