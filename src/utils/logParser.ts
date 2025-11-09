@@ -179,6 +179,5 @@ export function parseLogEvents(text: string): LogEvent[] {
         }
     }
 
-    console.log("Parsed events:", events);
     return events;
 }

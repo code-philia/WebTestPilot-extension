@@ -46,7 +46,8 @@ export class ParallelTestPanel {
     private _browser: Browser | undefined;
     private _context: BrowserContext | undefined;
     private _executions: Map<string, TestExecution> = new Map();
-    private _screenshotIntervals: Map<string, NodeJS.Timeout> = new Map();
+    private _targetIdMap: Map<string, string> = new Map(); // testId -> targetId
+    private _screencastClients: Map<string, any> = new Map();
     private _outputChannel: vscode.OutputChannel;
     private _testLogs: Map<string, { stdout: string[], stderr: string[] }> = new Map();
     private _testOutputChannels: Map<string, vscode.OutputChannel> = new Map();
@@ -189,6 +190,7 @@ export class ParallelTestPanel {
             const cdp = await page.context().newCDPSession(page);
             const { targetInfo } = await cdp.send('Target.getTargetInfo');
             const TARGET_ID = targetInfo.targetId;
+            this._targetIdMap.set(test.id, TARGET_ID);
             
             this._outputChannel.appendLine(`[${test.name}] Tab index: ${TARGET_ID}`);
 
@@ -283,14 +285,7 @@ export class ParallelTestPanel {
             pythonProcess.on('close', (code: number, signal: string) => {
                 execution.isRunning = false;
                 execution.endTime = Date.now();
-                
-                // Stop screenshot streaming
-                const interval = this._screenshotIntervals.get(test.id);
-                if (interval) {
-                    clearInterval(interval);
-                    this._screenshotIntervals.delete(test.id);
-                    testOutputChannel.appendLine(`[${test.name}] Screenshot streaming stopped`);
-                }
+                this._stopScreencast(test.id);
 
                 // Parse result
                 let result = { status: 'passed', errors: [] as string[] };
@@ -472,63 +467,40 @@ export class ParallelTestPanel {
         }
     }
 
+    private async _stopScreencast(testId: string) {
+        const client = this._screencastClients.get(testId);
+        if (client) {
+            await client.send('Page.stopScreencast');
+            this._screencastClients.delete(testId);
+        }
+    }
+
     /**
       * Starts screenshot streaming for a specific test
       */
-    private _startScreenshotStream(testId: string, page: Page) {
-        const captureScreenshot = async () => {
-            try {
-                // Verify page is still valid and connected
-                if (!page || page.isClosed()) {
-                    this._outputChannel.appendLine(`[${testId}] Browser tab closed, stopping screenshot streaming`);
-                    const interval = this._screenshotIntervals.get(testId);
-                    console.error(`[${testId}] Browser tab closed, stopping screenshot streaming`);
-                    if (interval) {
-                        clearInterval(interval);
-                        this._screenshotIntervals.delete(testId);
-                    }
-                    return;
-                }
+    private async _startScreenshotStream(testId: string, page: Page) {
+        assert(this._context, 'Browser context should be defined');
 
-                const imgBuffer = await page.screenshot({
-                    type: 'png',
-                    fullPage: false,
-                    scale: 'device',
-                    timeout: 5000
-                });
-                const base64 = imgBuffer.toString('base64');
-                
-                // Send screenshot with tab verification info
-                this._panel.webview.postMessage({
-                    type: 'screenshot',
-                    testId: testId,
-                    data: base64,
-                    timestamp: Date.now(),
-                    url: page.url()
-                });
-            } catch (error) {
-                console.error(`Screenshot capture failed for ${testId}:`, error);
-                this._outputChannel.appendLine(`[${testId}] Screenshot error: ${error instanceof Error ? error.message : String(error)}`);
-                
-                // Terminate the interval on exception
-                const interval = this._screenshotIntervals.get(testId);
-                if (interval) {
-                    clearInterval(interval);
-                    this._screenshotIntervals.delete(testId);
-                    console.log(`[${testId}] Screenshot streaming stopped due to error`);
-                    this._outputChannel.appendLine(`[${testId}] Screenshot streaming stopped due to error`);
-                }
-            }
-        };
+        const client = await this._context.newCDPSession(page);
+        await client.send('Page.startScreencast', {
+            format: 'jpeg',
+            quality: 60,
+            maxWidth: 1920,
+            maxHeight: 1080,
+            everyNthFrame: 2
+        });
 
-        // Capture initial screenshot to verify tab connection
-        this._outputChannel.appendLine(`[${testId}] Taking initial screenshot to verify tab connection`);
-        captureScreenshot();
-
-        // 2 FPS
-        const interval = setInterval(captureScreenshot, 500);
-        this._screenshotIntervals.set(testId, interval);
-        
+        client.on('Page.screencastFrame', async (frame) => {
+            const { data, sessionId } = frame;
+            this._panel.webview.postMessage({
+                type: 'screenshot',
+                data,
+                testId,
+                timestamp: Date.now(),
+                url: page.url()
+            });
+            await client.send('Page.screencastFrameAck', { sessionId });
+        });
         this._outputChannel.appendLine(`[${testId}] Screenshot streaming started for browser tab`);
     }
 
@@ -551,14 +523,7 @@ export class ParallelTestPanel {
         const execution = this._executions.get(testId);
         if (execution && execution.isRunning) {
             this._testOutputChannels.get(testId)?.appendLine(`[${execution.testItem.name}] Stopping test...`);
-            
-            // Stop screenshot streaming for this test
-            const interval = this._screenshotIntervals.get(testId);
-            if (interval) {
-                clearInterval(interval);
-                this._screenshotIntervals.delete(testId);
-                this._testOutputChannels.get(testId)?.appendLine(`[${execution.testItem.name}] Screenshot streaming stopped`);
-            }
+            this._stopScreencast(testId);
 
             assert(execution.engine, 'Test engine is null on stopTest');
 
@@ -611,12 +576,6 @@ export class ParallelTestPanel {
         
         // Clear all executions
         this._executions.clear();
-        
-        // Clear screenshot intervals
-        this._screenshotIntervals.forEach((interval) => {
-            clearInterval(interval);
-        });
-        this._screenshotIntervals.clear();
         
         // Update UI to reflect cleared state
         this._panel.webview.postMessage({
@@ -700,12 +659,10 @@ export class ParallelTestPanel {
 
         // Stop all tests
         this._stopAllTests();
-
-        // Stop all screenshot streaming
-        this._screenshotIntervals.forEach((interval) => {
-            clearInterval(interval);
+        this._screencastClients.forEach((_, testId) => {
+            this._stopScreencast(testId);
         });
-        this._screenshotIntervals.clear();
+        this._screencastClients.clear();
 
         // Close individual test output channels
         this._testOutputChannels.forEach((outputChannel) => {

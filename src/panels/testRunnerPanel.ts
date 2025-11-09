@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Browser, BrowserContext, chromium, Page } from "playwright-core";
+import { Browser, BrowserContext, CDPSession, chromium, Page } from "playwright-core";
 
 import * as vscode from "vscode";
 import { TestItem } from "../models";
@@ -18,8 +18,8 @@ export class TestRunnerPanel {
     private _browser: Browser | undefined;
     private _context: BrowserContext | undefined;
     private _page: Page | undefined;
+    private _cdpSession: CDPSession | undefined;
     private _targetId: string | undefined;
-    private _screenshotInterval: NodeJS.Timeout | undefined;
     private _testEngine: TestEngineService | undefined;
     private _progress:
     | vscode.Progress<{
@@ -49,7 +49,6 @@ export class TestRunnerPanel {
                 const msgType = message?.type || message?.command;
                 switch (msgType) {
                 case "ready":
-                    console.log("Webview ready for screenshots");
                     return;
                 case "stopTest":
                     this._stopTest();
@@ -133,8 +132,7 @@ export class TestRunnerPanel {
                 }
             });
 
-            // Start screenshot streaming (every 500ms for near real-time)
-            this._startScreenshotStream();
+            await this._startWebcastStream();
         } catch (error) {
             console.error("Failed to connect to browser:", error);
             vscode.window.showErrorMessage(
@@ -171,40 +169,29 @@ export class TestRunnerPanel {
     /**
     * Starts periodic screenshot capture and streaming to webview
     */
-    private _startScreenshotStream() {
-        if (this._screenshotInterval) {
-            clearInterval(this._screenshotInterval);
-        }
+    private async _startWebcastStream() {
+        assert(this._context, "Browser context should be defined");
+        assert(this._page, "Page should be defined");
+        
+        const client = await this._context.newCDPSession(this._page);
+        this._cdpSession = client;
 
-        const captureScreenshot = async () => {
-            if (!this._page) {
-                return;
-            }
-
-            try {
-                const imgBuffer = await this._page.screenshot({
-                    type: "png",
-                    fullPage: false,
-                    scale: "device",
-                    timeout: 5000,
-                });
-                const base64 = imgBuffer.toString("base64");
-
-                this._panel.webview.postMessage({
-                    type: "screenshot",
-                    data: base64,
-                });
-            } catch (error) {
-                console.error("Screenshot capture failed:", error);
-                clearInterval(this._screenshotInterval);
-            }
-        };
-
-        // Capture initial screenshot
-        captureScreenshot();
-
-        // Then capture every 200ms for near real-time updates
-        this._screenshotInterval = setInterval(captureScreenshot, 600);
+        await client.send('Page.startScreencast', {
+            format: 'jpeg',
+            quality: 60,
+            maxWidth: 1920,
+            maxHeight: 1080,
+            everyNthFrame: 2
+        });
+    
+        client.on('Page.screencastFrame', async (frame) => {
+            const { data, sessionId } = frame;
+            this._panel.webview.postMessage({
+                type: 'screenshot',
+                data,
+            });
+            await client.send('Page.screencastFrameAck', { sessionId });
+        });
     }
 
     /**
@@ -517,8 +504,8 @@ export class TestRunnerPanel {
         }
 
         // Stop screenshot streaming
-        if (this._screenshotInterval) {
-            clearInterval(this._screenshotInterval);
+        if (this._cdpSession) {
+            this._cdpSession.send('Page.stopScreencast');
         }
 
         // Close browser connection
