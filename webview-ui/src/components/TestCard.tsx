@@ -74,6 +74,7 @@ export const TestCard: React.FC<TestCardProps> = ({
           {test.name}
         </div>
         <div className={`test-status ${getStatusClass()}`}>{test.currentAction}</div>
+        &nbsp;&nbsp;
         <div className={`test-status ${getStatusClass()}`}>{test.status}</div>
       </div>
 
@@ -144,8 +145,6 @@ export const TestCard: React.FC<TestCardProps> = ({
                 log.type === "stderr" ? "log-stderr" : ""
               }`}
             >
-              <span className="log-time">{log.time}</span>
-              <span className="log-type">[{log.type.toUpperCase()}]</span>
               <span className="log-message">{log.message}</span>
             </div>
           ))}
