@@ -5,7 +5,7 @@
   "fixtureId": "fixture_mhqkipi9_0.hj9zkx0weyq",
   "actions": [
     {
-      "action": "首页右上角点击“尊贵的用户”",
+      "action": "在首页右上角点击“尊贵的...”标志",
       "expectedResult": ""
     },
     {

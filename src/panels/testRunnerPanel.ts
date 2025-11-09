@@ -16,6 +16,7 @@ export class TestRunnerPanel {
     private _disposables: vscode.Disposable[] = [];
     private _browser: any;
     private _page: Page | undefined;
+    private _targetId: string | undefined;
     private _screenshotInterval: NodeJS.Timeout | undefined;
     private _testEngine: TestEngineService | undefined;
     private _progress:
@@ -68,21 +69,27 @@ export class TestRunnerPanel {
     }
 
     /**
-   * Connects to the remote browser via CDP and starts screenshot streaming
-   */
+    * Connects to the remote browser via CDP and starts screenshot streaming
+    */
     private async _connectToBrowser(cdpEndpoint: string) {
         try {
             // Connect to CDP
             this._browser = await chromium.connectOverCDP(cdpEndpoint);
 
-            // Get the first available page or create a new one
+            // Get the first available context or create a new one
             const contexts = this._browser.contexts();
             const context =
         contexts.length > 0 ? contexts[0] : await this._browser.newContext();
-            const pages = context.pages();
-            this._page = pages.length > 0 ? pages[0] : await context.newPage();
-
-            assert(this._page, "Failed to get or create a page in the browser");
+            
+            // Always create a new page for each test run
+            this._page = await context.newPage();
+            
+            assert(this._page, "Failed to create a new page in the browser");
+            
+            // Get target ID for the new page
+            const cdp = await this._page.context().newCDPSession(this._page);
+            const { targetInfo } = await cdp.send('Target.getTargetInfo');
+            this._targetId = targetInfo.targetId;
 
             // Send initial info
             this._panel.webview.postMessage({
@@ -254,9 +261,16 @@ export class TestRunnerPanel {
                     TestRunnerPanel.currentPanel._testEngine = testEngine;
 
                     try {
+                        // Ensure we have a target ID before starting the test
+                        const targetId = TestRunnerPanel.currentPanel._targetId;
+                        if (!targetId) {
+                            throw new Error("Target ID not available - browser page not properly initialized");
+                        }
+                        
                         const pythonProcess = await testEngine.spawnPythonAgent(
                             testItem,
-                            outputChannel
+                            outputChannel,
+                            targetId
                         );
 
                         // Store process reference for cancellation

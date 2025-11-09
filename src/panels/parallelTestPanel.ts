@@ -231,7 +231,7 @@ export class ParallelTestPanel {
             const pythonProcess = await engine.spawnPythonAgent(
                 test,
                 testOutputChannel,
-                ['--target-id', TARGET_ID]
+                TARGET_ID
             );
 
             execution.pythonProcess = pythonProcess;

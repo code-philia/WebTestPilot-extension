@@ -29,6 +29,7 @@ export class TestEngineService {
     public async spawnPythonAgent(
         testItem: TestItem,
         outputChannel: vscode.OutputChannel,
+        targetId: string,
         extraArgs: string[] = []
     ): Promise<ChildProcess> {
         const fixtureDataProvider = (global as any).webTestPilotFixtureTreeDataProvider as any;
@@ -96,7 +97,10 @@ export class TestEngineService {
             args.push("--environment-file-path", environmentFilePath);
         }
 
-        // Add extra args if provided (e.g., target-id for parallel tabs)
+        // Add target-id as required parameter
+        args.push('--target-id', targetId);
+        
+        // Add any extra args
         if (extraArgs && extraArgs.length > 0) {
             args.push(...extraArgs);
         }
