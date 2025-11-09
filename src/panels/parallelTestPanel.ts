@@ -482,6 +482,7 @@ export class ParallelTestPanel {
                 if (!page || page.isClosed()) {
                     this._outputChannel.appendLine(`[${testId}] Browser tab closed, stopping screenshot streaming`);
                     const interval = this._screenshotIntervals.get(testId);
+                    console.error(`[${testId}] Browser tab closed, stopping screenshot streaming`);
                     if (interval) {
                         clearInterval(interval);
                         this._screenshotIntervals.delete(testId);

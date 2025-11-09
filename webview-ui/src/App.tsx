@@ -59,9 +59,6 @@ const App: React.FC = () => {
       content = <ParallelRunner />;
       break;
 
-    // Future pages will be added here:
-    // case 'import': return <Import />;
-
     default:
       content = (
         <div style={{ padding: "20px", textAlign: "center" }}>
@@ -74,8 +71,8 @@ const App: React.FC = () => {
   return (
     <I18nProvider i18n={i18n}>
       <I18nContextProvider>
-        <div style={{ display: "flex", justifyContent: "flex-end", padding: "8px" }}>
-          <LanguageSwitcher />
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          {/* <LanguageSwitcher /> */}
         </div>
         {content}
       </I18nContextProvider>

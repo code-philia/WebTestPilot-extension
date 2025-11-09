@@ -1,106 +1,148 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useVSCode } from "../hooks/useVSCode";
 import "../App.css";
 import { useLingui } from "@lingui/react/macro";
 
+interface RunnerMessage {
+  type?: string;
+  command?: string;
+  url?: string;
+  data?: string; // screenshot base64
+  level?: string;
+  text?: string;
+  displayMessage?: string;
+  eventType?: "bug" | "PASSED" | "FAILED";
+}
+
 export const SingleRunner: React.FC = () => {
   const { t } = useLingui();
   const { postMessage, onMessage } = useVSCode();
-  const [status, setStatus] = useState<string>(t`Connecting to browser...`);
-  const [url, setUrl] = useState<string>("-");
-  const [footerText, setFooterText] = useState<string>(
-    t`Waiting for connection...`
-  );
+
+  const [url, setUrl] = useState("-");
   const [screenshot, setScreenshot] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [showStop, setShowStop] = useState<boolean>(false);
-  const [stopDisabled, setStopDisabled] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const [showStop, setShowStop] = useState(false);
+  const [stopDisabled, setStopDisabled] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
+  const [statusEventType, setStatusEventType] = useState<string | undefined>(undefined);
+  const [screenshotVersion, setScreenshotVersion] = useState(0);
+  const [pulseStatus, setPulseStatus] = useState(false);
 
   useEffect(() => {
-    // Notify extension that webview is ready
+    // tell extension we are ready once
     postMessage("ready");
 
-    // Subscribe to messages
-    const cleanup = onMessage((message: any) => {
-      const type = message?.type || message?.command;
+    const unsubscribe = onMessage((raw: RunnerMessage) => {
+      const type = raw.type || raw.command;
       switch (type) {
         case "connected":
-          setStatus(t`🟢 Connected`);
           setLoading(false);
-          setUrl(message.url || "about:blank");
-          setFooterText(t`Streaming live from remote browser`);
+          setUrl(raw.url || "about:blank");
           break;
         case "screenshot":
-          if (message.data) {
-            setScreenshot("data:image/png;base64," + message.data);
+          if (raw.data) {
+            setScreenshot(`data:image/png;base64,${raw.data}`);
+            setScreenshotVersion((v) => v + 1);
             setLoading(false);
           }
           break;
         case "navigation":
-          setUrl(message.url || url);
+          if (raw.url) setUrl(raw.url);
           break;
         case "console":
-          // log from browser
           // eslint-disable-next-line no-console
-          console.log("[Browser]", message.level, message.text);
+          console.log("[Browser]", raw.level, raw.text);
           break;
         case "testStarted":
           setShowStop(true);
           setStopDisabled(false);
-          setFooterText(t`Test running... Click Stop to cancel`);
           break;
         case "testFinished":
-          setShowStop(false);
-          setStopDisabled(false);
-          setFooterText(t`Test finished`);
-          break;
         case "testStopped":
           setShowStop(false);
           setStopDisabled(false);
-          setFooterText(t`Test stopped by user`);
+          break;
+        case "statusUpdate":
+          if (raw.displayMessage) {
+            setStatusMessage(raw.displayMessage);
+            setStatusEventType(undefined);  
+          }
+          if (raw.eventType) {
+            setStatusEventType(raw.eventType);
+          }
           break;
         case "error":
           setLoading(false);
-          setFooterText(t`Connection failed`);
-          setStatus(t`🔴 Disconnected`);
-          // optionally display message
           break;
         default:
           break;
       }
     });
 
-    return cleanup;
+    return unsubscribe;
   }, [onMessage, postMessage]);
 
+  // Pulse highlight when status updates
+  useEffect(() => {
+    if (!statusMessage) return;
+    setPulseStatus(true);
+    const t = setTimeout(() => setPulseStatus(false), 800);
+    return () => clearTimeout(t);
+  }, [statusMessage]);
+
   const handleStop = () => {
-    // send stop to extension
     postMessage("stopTest");
     setStopDisabled(true);
   };
 
+  // Render helper: turn literal "\n" sequences into real line breaks for display
+  const formatMultiline = (s?: string | null) =>
+    (s ?? "").replaceAll("\\n", "\n");
+
   return (
-    <div className="live-browser-root">
-      <div className="flex items-center p-2 w-full">
-        <div>
-          <div>{url}</div>
+    <div>
+      <div className="sr-topbar" role="banner">
+        <div className="sr-boxes">
+          <div className="sr-infobox sr-urlbox" title={url} aria-label={t`Current URL`}> 
+            <div className="label">{t`Current URL`}</div>
+            <div className="sr-url-text" data-testid="current-url">{formatMultiline(url)}</div>
+          </div>
+          <div
+            className={`sr-infobox step ${
+              statusEventType === "PASSED"
+                ? "is-passed"
+                : statusEventType === "FAILED"
+                ? "is-failed"
+                : statusEventType === "bug"
+                ? "is-bug"
+                : ""
+            } sr-breathe ${pulseStatus ? "sr-pulse" : ""}`}
+            aria-label={t`Step Update`}
+            data-status={statusEventType || "none"}
+          > 
+            <div className="label">{t`Step Update`}</div>
+            <div className="sr-step-text" data-testid="step-update">{formatMultiline(statusMessage) || t`No updates yet`}</div>
+          </div>
         </div>
-        <div className="controls">
+        <div className="sr-right-controls">
           {showStop && (
             <button
-              className={`stop-button ${showStop ? "visible" : ""}`}
               onClick={handleStop}
               disabled={stopDisabled}
+              className="sr-stop-button"
+              aria-live="polite"
+              aria-busy={stopDisabled}
             >
-              ⏹️ {stopDisabled ? t`Stopping...` : t`Stop Test`}
+              <span className="sr-stop-emoji" aria-hidden>⏹️</span>
+              <span>{stopDisabled ? t`Stopping...` : t`Stop Test`}</span>
             </button>
           )}
         </div>
       </div>
-
-      <div className="content">
+      <div className="sr-content">
         {loading && (
-          <div className="loading">
+          <div className="sr-loading" role="status" aria-live="polite">
+            <span className="sr-spinner" />
             {t`Connecting to remote browser...`}
           </div>
         )}
@@ -109,11 +151,9 @@ export const SingleRunner: React.FC = () => {
             id="screenshot"
             src={screenshot}
             alt={t`Live screenshot`}
-            style={{
-              maxWidth: "100%",
-              maxHeight: "100%",
-              objectFit: "contain",
-            }}
+            className="sr-screenshot"
+            key={screenshotVersion}
+            data-testid="live-screenshot"
           />
         )}
       </div>

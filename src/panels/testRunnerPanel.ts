@@ -330,7 +330,9 @@ export class TestRunnerPanel {
                     pythonProcess.stderr.on("data", (data: Buffer) => {
                         const text = data.toString();
                         stderrData += text;
-                        outputChannel.append(`${text}`);
+                        outputChannel.append(`STDERR: ${text}`);
+
+                        this._parseStepUpdates(text);
                     });
 
                     await new Promise<void>((resolve, reject) => {
@@ -369,6 +371,11 @@ export class TestRunnerPanel {
                                         }
                                     });
 
+                                this._panel.webview.postMessage({
+                                    type: "statusUpdate",
+                                    eventType: "PASSED",
+                                });
+
                                 resolve();
                             } else {
                                 outputChannel.appendLine(
@@ -385,6 +392,10 @@ export class TestRunnerPanel {
                                         }
                                     });
 
+                                this._panel.webview.postMessage({
+                                    type: "statusUpdate",
+                                    eventType: "FAILED"
+                                });
                                 reject(new Error(`Python process exited with code ${code}`));
                             }
 
@@ -396,16 +407,6 @@ export class TestRunnerPanel {
                             outputChannel.appendLine(
                                 `❌ Failed to start Python process: ${error.message}`
                             );
-                            vscode.window
-                                .showErrorMessage(
-                                    `Failed to run test: ${error.message}`,
-                                    "View Output"
-                                )
-                                .then((selection) => {
-                                    if (selection === "View Output") {
-                                        outputChannel.show();
-                                    }
-                                });
                             reject(error);
                         });
                     });
@@ -436,47 +437,54 @@ export class TestRunnerPanel {
 
         const events = parseLogEvents(text);
         for (const ev of events) {
+            let message = "";
+            let eventType = "";
+
             if (ev.type === "step") {
                 const stepNumber = ev.step;
                 if (ev.status === "started") {
-                    this._progress.report({
-                        message: `Step ${stepNumber}: ${ev.action || ""}`,
-                    });
+                    message = `Step ${stepNumber}: ${ev.action || ""}`;
                 } else if (ev.status === "passed") {
-                    vscode.window.showInformationMessage(`Step ${stepNumber} passed`);
+                    message = `Step ${stepNumber}: ✓ Passed`;
                 } else if (ev.status === "failed") {
-                    vscode.window.showErrorMessage(
-                        `❌ Step ${stepNumber} failed: ${ev.error || "error"}`
-                    );
+                    message = `Step ${stepNumber}: ❌ Failed - ${ev.error || "error"}`;
                 }
             } else if (ev.type === "verification") {
                 const stepNumber = ev.step;
 
                 if (ev.status === "verifying") {
-                    this._progress.report({
-                        message: `Step ${stepNumber}: Verifying - ${ev.expectation || ""}`,
-                    });
+                    message = `Step ${stepNumber}: Verifying - ${ev.expectation || ""}`;
                 } else if (ev.status === "verifyPassed") {
-                    this._progress.report({
-                        message: `Step ${stepNumber}: ✓ Completed`,
-                    });
-                    vscode.window.showInformationMessage(
-                        `✅ Step ${stepNumber} verification passed`
-                    );
+                    message = `Step ${stepNumber}: ✓ Completed Verification`;
+                    vscode.window.showInformationMessage(message);
                 } else if (ev.status === "verifyFailed") {
-                    this._progress.report({
-                        message: `Step ${stepNumber}: ❌ Failed - ${
-                            ev.error || "verification failed"
-                        }`,
-                    });
-                    vscode.window.showErrorMessage(
-                        `❌ Step ${stepNumber} verification failed: ${
-                            ev.error || "verification failed"
-                        }`
-                    );
+                    message = `Step ${stepNumber}: ❌ Failed - ${
+                        ev.error || "verification failed"
+                    }`;
+                    vscode.window.showErrorMessage(message);
                 }
             } else if (ev.type === "bug") {
-                vscode.window.showErrorMessage(`Bug reported: ${ev.message}`);
+                message = `Bug reported: ${ev.message}`;
+                eventType = "bug";
+                vscode.window.showErrorMessage(message);
+            } else if (ev.type === "locating" || ev.type === "abstract") {
+                message = ev.raw;
+            } else if (ev.type === "re-identifying") {
+                message = "Checking page re-identification...";
+            } else if (ev.type === "code") {
+                message = `Executing proposed code, ${ev.raw}`;
+            }
+
+            if (message !== "") {
+                console.log(message);
+                this._progress.report({
+                    message: message,
+                });
+                this._panel.webview.postMessage({
+                    type: "statusUpdate",
+                    displayMessage: message,
+                    eventType,
+                });
             }
         }
     }

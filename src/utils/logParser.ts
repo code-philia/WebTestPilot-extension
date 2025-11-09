@@ -1,5 +1,5 @@
 export type LogEvent =
-  | {
+    | {
       type: "step";
       step: number;
       action?: string;
@@ -7,7 +7,7 @@ export type LogEvent =
       error?: string;
       raw?: string;
     }
-  | {
+    | {
       type: "verification";
       step: number;
       expectation?: string;
@@ -15,12 +15,28 @@ export type LogEvent =
       error?: string;
       raw?: string;
     }
-  | {
+    | {
       type: "bug";
       message: string;
       raw?: string;
     }
-  | {
+    | {
+        type: "locating",
+        raw: string;
+    } 
+    | {
+        type: "re-identifying",
+        raw: string
+    }
+    | {
+        type: "code",
+        raw: string
+    }
+    | {
+        type: "abstract",
+        raw: string
+    }
+    | {
       type: "other";
       raw: string;
     };
@@ -42,12 +58,34 @@ export function parseLogEvents(text: string): LogEvent[] {
         return events;
     }
 
+    // Edge case with multi-lines
+    if (text.includes("Proposed code:")) {
+        // Split for "Proposed code:" and take the code part
+        return [
+            { type: "code", raw: text.split("Proposed code:")[1].trim() }
+        ];
+    }
+    if (text.includes("Abstracting page...")) {
+        return [
+            { type: "abstract", raw: "Abstracting page..." }
+        ];
+    }
+
     // Split into lines to handle multiple messages in a single chunk
     const lines = text.split(/\r?\n/).filter(Boolean);
     for (const line of lines) {
-        let m: RegExpMatchArray | null;
+        console.log("line: ", line,
+            "STEP", line.match(/STEP_(\d+):\s*(.+)$/),
+            "STEP PASS", line.match(/STEP_(\d+)_PASSED/),
+            "STEP FAIL", line.match(/STEP_(\d+)_FAILED:\s*(.+)/),
+            "VERIFYING STEP", line.match(/VERIFYING_STEP_(\d+):\s*(.+)/),
+            "VERIFYING STEP PASS", line.match(/VERIFYING_STEP_(\d+)_PASSED/),
+            "VERIFYING STEP FAIL", line.match(/VERIFYING_STEP_(\d+)_FAILED:\s*(.+)/),
+            "BUG", line.match(/Bug reported:\s*(.+)$/),
+        );
+        let m: RegExpMatchArray | null; 
 
-        m = line.match(/^STEP_(\d+):\s*(.+)$/);
+        m = line.match(/STEP_(\d+):\s*(.+)/);
         if (m) {
             events.push({
                 type: "step",
@@ -59,7 +97,7 @@ export function parseLogEvents(text: string): LogEvent[] {
             continue;
         }
 
-        m = line.match(/^STEP_(\d+)_PASSED$/);
+        m = line.match(/STEP_(\d+)_PASSED/);
         if (m) {
             events.push({
                 type: "step",
@@ -70,7 +108,7 @@ export function parseLogEvents(text: string): LogEvent[] {
             continue;
         }
 
-        m = line.match(/^STEP_(\d+)_FAILED:\s*(.+)$/);
+        m = line.match(/STEP_(\d+)_FAILED:\s*(.+)/);
         if (m) {
             events.push({
                 type: "step",
@@ -82,7 +120,7 @@ export function parseLogEvents(text: string): LogEvent[] {
             continue;
         }
 
-        m = line.match(/^VERIFYING_STEP_(\d+):\s*(.+)$/);
+        m = line.match(/VERIFYING_STEP_(\d+):\s*(.+)/);
         if (m) {
             events.push({
                 type: "verification",
@@ -94,7 +132,7 @@ export function parseLogEvents(text: string): LogEvent[] {
             continue;
         }
 
-        m = line.match(/^VERIFYING_STEP_(\d+)_PASSED$/);
+        m = line.match(/VERIFYING_STEP_(\d+)_PASSED/);
         if (m) {
             events.push({
                 type: "verification",
@@ -105,7 +143,7 @@ export function parseLogEvents(text: string): LogEvent[] {
             continue;
         }
 
-        m = line.match(/^VERIFYING_STEP_(\d+)_FAILED:\s*(.+)$/);
+        m = line.match(/VERIFYING_STEP_(\d+)_FAILED:\s*(.+)/);
         if (m) {
             events.push({
                 type: "verification",
@@ -117,6 +155,24 @@ export function parseLogEvents(text: string): LogEvent[] {
             continue;
         }
 
+        // Locating element to click: "description"
+        m = line.match(/Locating element to click:\s*"(.+)"/);
+        if (m) {
+            events.push({
+                type: "locating",
+                raw: line,
+            });
+        }
+
+        // Checking page re-identification...
+        m = line.match(/Checking page re-identification/);
+        if (m) {
+            events.push({
+                type: "re-identifying",
+                raw: line,
+            });
+        }
+
         m = line.match(/Bug reported:\s*(.+)$/);
         if (m) {
             events.push({ type: "bug", message: m[1].trim(), raw: line });
@@ -125,6 +181,8 @@ export function parseLogEvents(text: string): LogEvent[] {
 
         events.push({ type: "other", raw: line });
     }
+
+    console.log("Parsed events:", events);
 
     return events;
 }
