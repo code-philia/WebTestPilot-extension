@@ -164,6 +164,7 @@ export class TestRunnerPanel {
                     type: "png",
                     fullPage: true,
                     scale: "device",
+                    timeout: 5000,
                 });
                 const base64 = imgBuffer.toString("base64");
 
@@ -173,6 +174,7 @@ export class TestRunnerPanel {
                 });
             } catch (error) {
                 console.error("Screenshot capture failed:", error);
+                clearInterval(this._screenshotInterval);
             }
         };
 
@@ -180,7 +182,7 @@ export class TestRunnerPanel {
         captureScreenshot();
 
         // Then capture every 200ms for near real-time updates
-        this._screenshotInterval = setInterval(captureScreenshot, 200);
+        this._screenshotInterval = setInterval(captureScreenshot, 500);
     }
 
     /**

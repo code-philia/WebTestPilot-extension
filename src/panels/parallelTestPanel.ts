@@ -493,7 +493,7 @@ export class ParallelTestPanel {
                     type: 'png',
                     fullPage: false,
                     scale: 'device',
-                    timeout: 20000
+                    timeout: 5000
                 });
                 const base64 = imgBuffer.toString('base64');
                 
@@ -524,8 +524,8 @@ export class ParallelTestPanel {
         this._outputChannel.appendLine(`[${testId}] Taking initial screenshot to verify tab connection`);
         captureScreenshot();
 
-        // 5 FPS
-        const interval = setInterval(captureScreenshot, 200);
+        // 2 FPS
+        const interval = setInterval(captureScreenshot, 500);
         this._screenshotIntervals.set(testId, interval);
         
         this._outputChannel.appendLine(`[${testId}] Screenshot streaming started for browser tab`);

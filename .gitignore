@@ -19,7 +19,7 @@ dist/
 .mypy_cache
 */*/node_modules/*
 node_modules
-.webtestpilot
+./.webtestpilot
 
 # Devs
 archive
