@@ -1,0 +1,46 @@
+{
+  "id": "test_mhqfli1v_0.vgw3bgr25v10",
+  "name": "(Search Flight) 查询航班",
+  "url": "${CTRIP_URL}",
+  "fixtureId": "",
+  "actions": [
+    {
+      "action": "首页侧边栏点击“机票”",
+      "expectedResult": ""
+    },
+    {
+      "action": "点击出发地点",
+      "expectedResult": ""
+    },
+    {
+      "action": "输入出发地'上海 (SHA)'",
+      "expectedResult": ""
+    },
+    {
+      "action": "点击目的地",
+      "expectedResult": ""
+    },
+    {
+      "action": "输入目的地'北京 (BJS)'",
+      "expectedResult": ""
+    },
+    {
+      "action": "点击出发日期选择器",
+      "expectedResult": ""
+    },
+    {
+      "action": "选择 2025 年 12 月 15 日作为出发日期",
+      "expectedResult": ""
+    },
+    {
+      "action": "再次点击 2025 年 12 月 15 日以确认",
+      "expectedResult": ""
+    },
+    {
+      "action": "点击“搜索”",
+      "expectedResult": "显示出发地为上海、目的地为北京、出发日期为2025-12-15的航班列表"
+    }
+  ],
+  "createdAt": "2025-10-25T06:19:05.681Z",
+  "updatedAt": "2025-11-09T04:36:22.198Z"
+}

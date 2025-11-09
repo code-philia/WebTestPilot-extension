@@ -1,0 +1,18 @@
+{
+  "id": "test_mhqfli2n_0.fgb0k69wdte11",
+  "name": "(View Profile) 查看个人信息",
+  "url": "${CTRIP_URL}",
+  "fixtureId": "fixture_mhqkipi9_0.hj9zkx0weyq",
+  "actions": [
+    {
+      "action": "首页右上角点击“尊贵的用户”",
+      "expectedResult": ""
+    },
+    {
+      "action": "侧边栏点击个人信息-我的信息",
+      "expectedResult": "展示用户个人信息页面，包括手机号、邮箱、姓名、昵称"
+    }
+  ],
+  "createdAt": "2025-10-25T06:19:05.681Z",
+  "updatedAt": "2025-11-09T01:38:39.813Z"
+}
