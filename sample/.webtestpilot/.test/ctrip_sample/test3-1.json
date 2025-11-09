@@ -21,23 +21,15 @@
       "expectedResult": ""
     },
     {
-      "action": "Click on destination point picker",
-      "expectedResult": ""
-    },
-    {
       "action": "Choose destination 'Beijing (BJS)'",
       "expectedResult": ""
     },
     {
-      "action": "Click on departure date picker",
+      "action": "Under date picker, select departure date on date 15, 2025 month 12 (December)",
       "expectedResult": ""
     },
     {
-      "action": "Select departure date on date, 15 under December and 2025",
-      "expectedResult": ""
-    },
-    {
-      "action": "Click 'Search'",
+      "action": "Click 'Search' button",
       "expectedResult": "Show flight list: origin Shanghai, destination Beijing, date 2025-12-15"
     }
   ],
