@@ -45,20 +45,11 @@ export class TestRunnerPanel {
 
         // Handle messages from the webview (support both `type` and `command` fields)
         this._panel.webview.onDidReceiveMessage(
-            (message) => {
+            async (message) => {
                 const msgType = message?.type || message?.command;
                 switch (msgType) {
                 case "ready":
                     console.log("Webview ready for screenshots");
-                    return;
-                case "navigate":
-                    if (this._page) {
-                        this._page.goto(message.url).catch((err: Error) => {
-                            vscode.window.showErrorMessage(
-                                `Navigation failed: ${err.message}`
-                            );
-                        });
-                    }
                     return;
                 case "stopTest":
                     this._stopTest();
@@ -78,12 +69,23 @@ export class TestRunnerPanel {
             // Connect to CDP
             this._browser = await chromium.connectOverCDP(cdpEndpoint);
 
-            // Get the first available context or create a new one
+            // Close all existing contexts to ensure a fresh isolated context
+            // for (const ctx of this._browser.contexts()) {
+            //     try {
+            //         await ctx.close();
+            //     } catch (err) {
+            //         console.error("Failed to close context:", err);
+            //     }
+            // }
+
+            // Always create a new context
             const contexts = this._browser.contexts();
             this._context = contexts.length > 0 ? contexts[0] : await this._browser.newContext({
                 viewport: { width: 1920, height: 1080 },
                 deviceScaleFactor: 1
             });
+            this._context.setDefaultNavigationTimeout(60000);
+            this._context.setDefaultTimeout(30000);
 
             // Close existing pages
             if (this._context) {
@@ -202,7 +204,7 @@ export class TestRunnerPanel {
         captureScreenshot();
 
         // Then capture every 200ms for near real-time updates
-        this._screenshotInterval = setInterval(captureScreenshot, 500);
+        this._screenshotInterval = setInterval(captureScreenshot, 600);
     }
 
     /**
@@ -266,8 +268,8 @@ export class TestRunnerPanel {
      * Wait for targetId to be available after browser connection
      */
     private async _waitForTargetId(): Promise<void> {
-        const maxWaitTime = 10000; // 10 seconds
-        const checkInterval = 100; // 100ms
+        const maxWaitTime = 30000; // 10 seconds
+        const checkInterval = 1000; // 100ms
         let elapsed = 0;
 
         while (!this._targetId && elapsed < maxWaitTime) {
@@ -470,7 +472,6 @@ export class TestRunnerPanel {
                     message = `Step ${stepNumber}: ❌ Failed - ${
                         ev.error || "verification failed"
                     }`;
-                    vscode.window.showErrorMessage(message);
                 }
             } else if (ev.type === "bug") {
                 message = `Bug reported: ${ev.message}`;

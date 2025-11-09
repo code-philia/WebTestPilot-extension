@@ -81,6 +81,12 @@ export function parseLogEvents(text: string): LogEvent[] {
         ];
     }
 
+    if (text.includes("Checking page re-identification")) {
+        return [
+            { type: "re-identifying", raw: "Checking page re-identification" }
+        ];
+    }
+
     // Split into lines to handle multiple messages in a single chunk
     const lines = text.split(/\r?\n/).filter(Boolean);
     for (const line of lines) {
@@ -162,15 +168,6 @@ export function parseLogEvents(text: string): LogEvent[] {
         if (m) {
             events.push({
                 type: "locating",
-                raw: line,
-            });
-        }
-
-        // Checking page re-identification...
-        m = line.match(/Checking page re-identification/);
-        if (m) {
-            events.push({
-                type: "re-identifying",
                 raw: line,
             });
         }
