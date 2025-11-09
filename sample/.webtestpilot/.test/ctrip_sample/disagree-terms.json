@@ -1,0 +1,17 @@
+{
+  "id": "test-1-1",
+  "name": "Disagree with terms",
+  "url": "${CTRIP_URL}",
+  "actions": [
+    {
+      "action": "Click the '注册' button",
+      "expectedResult": ""
+    },
+    {
+      "action": "Click '不同意'",
+      "expectedResult": "Show homepage containing '酒店' and '机票' button"
+    }
+  ],
+  "createdAt": "2025-10-25T06:19:05.681Z",
+  "updatedAt": "2025-11-09T13:01:30.357Z"
+}

@@ -16,14 +16,10 @@
       "expectedResult": ""
     },
     {
-      "action": "Tick checkbox on agree terms of services",
-      "expectedResult": ""
-    },
-    {
       "action": "Click 'Login' button with color dark orange",
-      "expectedResult": "Login succeeds and returns to the home page"
+      "expectedResult": "The interface asks user to read and check agreement box first"
     }
   ],
   "createdAt": "2025-10-25T06:19:05.681Z",
-  "updatedAt": "2025-11-09T01:50:34.349Z"
+  "updatedAt": "2025-11-09T12:29:40.249Z"
 }
