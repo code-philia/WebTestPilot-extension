@@ -78,21 +78,12 @@ export function parseLogEvents(text: string): LogEvent[] {
     if (text.includes("Reasoning next action...")) {
         return [
             { type: "proposing-action", raw: "Reasoning next action..." }
-        ]
+        ];
     }
 
     // Split into lines to handle multiple messages in a single chunk
     const lines = text.split(/\r?\n/).filter(Boolean);
     for (const line of lines) {
-        console.log("line: ", line,
-            "STEP", line.match(/STEP_(\d+):\s*(.+)$/),
-            "STEP PASS", line.match(/STEP_(\d+)_PASSED/),
-            "STEP FAIL", line.match(/STEP_(\d+)_FAILED:\s*(.+)/),
-            "VERIFYING STEP", line.match(/VERIFYING_STEP_(\d+):\s*(.+)/),
-            "VERIFYING STEP PASS", line.match(/VERIFYING_STEP_(\d+)_PASSED/),
-            "VERIFYING STEP FAIL", line.match(/VERIFYING_STEP_(\d+)_FAILED:\s*(.+)/),
-            "BUG", line.match(/Bug reported:\s*(.+)$/),
-        );
         let m: RegExpMatchArray | null; 
 
         m = line.match(/STEP_(\d+):\s*(.+)/);
@@ -188,11 +179,8 @@ export function parseLogEvents(text: string): LogEvent[] {
             events.push({ type: "bug", message: m[1].trim(), raw: line });
             continue;
         }
-
-        events.push({ type: "other", raw: line });
     }
 
     console.log("Parsed events:", events);
-
     return events;
 }

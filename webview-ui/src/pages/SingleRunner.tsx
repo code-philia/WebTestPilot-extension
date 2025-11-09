@@ -65,7 +65,7 @@ export const SingleRunner: React.FC = () => {
         case "statusUpdate":
           if (raw.displayMessage) {
             setStatusMessage(raw.displayMessage);
-            setStatusEventType(undefined);  
+            setStatusEventType(undefined);
           }
           if (raw.eventType) {
             setStatusEventType(raw.eventType);
@@ -105,7 +105,7 @@ export const SingleRunner: React.FC = () => {
         <div className="sr-boxes">
           <div className="sr-infobox sr-urlbox" title={url} aria-label={t`Current URL`}> 
             <div className="label">{t`Current URL`}</div>
-            <div className="sr-url-text" data-testid="current-url">{formatMultiline(url)}</div>
+            <div className="sr-url-text" data-testid="current-url">{formatMultiline(url.length > 50 ? url.slice(0, 60) + "..." : url)}</div>
           </div>
           <div
             className={`sr-infobox step ${
@@ -119,7 +119,7 @@ export const SingleRunner: React.FC = () => {
             } sr-breathe ${pulseStatus ? "sr-pulse" : ""}`}
             aria-label={t`Step Update`}
             data-status={statusEventType || "none"}
-          > 
+          >
             <div className="label">{t`Step Update`}</div>
             <div className="sr-step-text" data-testid="step-update">{formatMultiline(statusMessage) || t`No updates yet`}</div>
           </div>

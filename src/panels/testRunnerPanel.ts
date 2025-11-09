@@ -84,6 +84,15 @@ export class TestRunnerPanel {
                 viewport: { width: 1920, height: 1080 },
                 deviceScaleFactor: 1
             });
+
+            // Close existing pages
+            if (this._context) {
+                this._context.pages().forEach(async (page: Page) => {
+                    if (!page.isClosed()) {
+                        await page.close();
+                    }
+                });
+            }
             
             // Always create a new page for each test run
             this._page = await this._context.newPage();
