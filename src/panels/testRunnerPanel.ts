@@ -473,6 +473,8 @@ export class TestRunnerPanel {
                 message = "Checking page re-identification...";
             } else if (ev.type === "code") {
                 message = `Executing proposed code, ${ev.raw}`;
+            } else if (ev.type === "proposing-action") {
+                message = "Reasoning next action...";
             }
 
             if (message !== "") {

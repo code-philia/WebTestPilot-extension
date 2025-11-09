@@ -37,6 +37,10 @@ export type LogEvent =
         raw: string
     }
     | {
+        type: "proposing-action",
+        raw: string
+    }
+    | {
       type: "other";
       raw: string;
     };
@@ -69,6 +73,12 @@ export function parseLogEvents(text: string): LogEvent[] {
         return [
             { type: "abstract", raw: "Abstracting page..." }
         ];
+    }
+
+    if (text.includes("Reasoning next action...")) {
+        return [
+            { type: "proposing-action", raw: "Reasoning next action..." }
+        ]
     }
 
     // Split into lines to handle multiple messages in a single chunk
