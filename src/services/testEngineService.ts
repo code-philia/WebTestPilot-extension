@@ -43,13 +43,25 @@ export class TestEngineService {
         const environmentService = (global as any).environmentService as any;
         const selectedEnv = environmentService?.getSelectedEnvironment?.();
         const environmentFilePath = selectedEnv?.fullPath;
-
-        const pythonPath = path.join(
+        
+        // Fallback to "Scripts" if "bin" does not exist (Windows)
+        let pythonPath = path.join(
             this.TEST_ENGINE_PATH,
             ".venv",
             "bin",
             "python"
         );
+        try {
+            await fs.access(pythonPath);
+        } catch {
+            pythonPath = path.join(
+                this.TEST_ENGINE_PATH,
+                ".venv",
+                "Scripts",
+                "python.exe"
+            );
+        }
+
         const cliScriptPath = path.join(
             this.TEST_ENGINE_PATH,
             "src",
