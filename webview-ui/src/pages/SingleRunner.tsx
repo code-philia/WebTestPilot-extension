@@ -105,7 +105,7 @@ export const SingleRunner: React.FC = () => {
         <div className="sr-boxes">
           <div className="sr-infobox sr-urlbox" title={url} aria-label={t`Current URL`}> 
             <div className="label">{t`Current URL`}</div>
-            <div className="sr-url-text" data-testid="current-url">{formatMultiline(url.length > 50 ? url.slice(0, 60) + "..." : url)}</div>
+            <div className="sr-url-text" data-testid="current-url">{formatMultiline(url.length > 40 ? url.slice(0, 60) + "..." : url)}</div>
           </div>
           <div
             className={`sr-infobox step ${

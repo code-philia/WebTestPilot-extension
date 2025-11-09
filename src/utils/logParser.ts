@@ -84,7 +84,43 @@ export function parseLogEvents(text: string): LogEvent[] {
     // Split into lines to handle multiple messages in a single chunk
     const lines = text.split(/\r?\n/).filter(Boolean);
     for (const line of lines) {
-        let m: RegExpMatchArray | null; 
+        let m: RegExpMatchArray | null;
+
+        // VERIFYING_STEP go first to avoid confusion with STEP_
+        m = line.match(/VERIFYING_STEP_(\d+):\s*(.+)/);
+        if (m) {
+            events.push({
+                type: "verification",
+                step: parseInt(m[1], 10),
+                expectation: m[2].trim(),
+                status: "verifying",
+                raw: line,
+            });
+            continue;
+        }
+
+        m = line.match(/VERIFYING_STEP_(\d+)_PASSED/);
+        if (m) {
+            events.push({
+                type: "verification",
+                step: parseInt(m[1], 10),
+                status: "verifyPassed",
+                raw: line,
+            });
+            continue;
+        }
+
+        m = line.match(/VERIFYING_STEP_(\d+)_FAILED:\s*(.+)/);
+        if (m) {
+            events.push({
+                type: "verification",
+                step: parseInt(m[1], 10),
+                status: "verifyFailed",
+                error: m[2].trim(),
+                raw: line,
+            });
+            continue;
+        }
 
         m = line.match(/STEP_(\d+):\s*(.+)/);
         if (m) {
@@ -115,41 +151,6 @@ export function parseLogEvents(text: string): LogEvent[] {
                 type: "step",
                 step: parseInt(m[1], 10),
                 status: "failed",
-                error: m[2].trim(),
-                raw: line,
-            });
-            continue;
-        }
-
-        m = line.match(/VERIFYING_STEP_(\d+):\s*(.+)/);
-        if (m) {
-            events.push({
-                type: "verification",
-                step: parseInt(m[1], 10),
-                expectation: m[2].trim(),
-                status: "verifying",
-                raw: line,
-            });
-            continue;
-        }
-
-        m = line.match(/VERIFYING_STEP_(\d+)_PASSED/);
-        if (m) {
-            events.push({
-                type: "verification",
-                step: parseInt(m[1], 10),
-                status: "verifyPassed",
-                raw: line,
-            });
-            continue;
-        }
-
-        m = line.match(/VERIFYING_STEP_(\d+)_FAILED:\s*(.+)/);
-        if (m) {
-            events.push({
-                type: "verification",
-                step: parseInt(m[1], 10),
-                status: "verifyFailed",
                 error: m[2].trim(),
                 raw: line,
             });
