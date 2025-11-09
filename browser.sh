@@ -28,6 +28,8 @@ echo "Starting Chrome in full screen with profile $PROFILE_DIR..."
     --no-first-run \
     --no-default-browser-check \
     --disable-extensions \
+    --disable-translate \
+    --disable-features=TranslateUI,Translate \
     --force-device-scale-factor=1 \
     --window-size=${WINDOW_SIZE} \
     > /tmp/chrome.log 2>&1 &
