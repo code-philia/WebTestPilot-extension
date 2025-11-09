@@ -247,7 +247,6 @@ export class TestRunnerPanel {
                         console.log("Test cancelled from notification");
                         TestRunnerPanel.currentPanel?._stopTest();
                     });
-                    progress.report({ message: "Starting Python agent..." });
 
                     const testEngine = new TestEngineService();
                     TestRunnerPanel.currentPanel._testEngine = testEngine;

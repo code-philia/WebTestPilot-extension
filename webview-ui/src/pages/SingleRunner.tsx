@@ -83,10 +83,6 @@ export const SingleRunner: React.FC = () => {
     <div className="live-browser-root">
       <div className="flex items-center p-2 w-full">
         <div>
-          <div className="animate-pulse">
-            {t`🔴 Live`}
-          </div>
-          <div className="status">{status}</div>
           <div>{url}</div>
         </div>
         <div className="controls">
