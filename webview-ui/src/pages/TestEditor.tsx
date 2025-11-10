@@ -142,17 +142,12 @@ export const TestEditor: React.FC = () => {
     }));
   }, []);
 
-  const handleActionChange = useCallback(
-    (index: number, field: keyof TestAction, value: string) => {
-      setTestData((prev) => ({
-        ...prev,
-        actions: prev.actions.map((action, idx) =>
-          idx === index ? { ...action, [field]: value } : action
-        ),
-      }));
-    },
-    []
-  );
+  const handleActionsChange = useCallback((newActions: TestAction[]) => {
+    setTestData((prev) => ({
+      ...prev,
+      actions: newActions,
+    }));
+  }, []);
 
   const handleClose = useCallback(() => {
     postMessage("close");
@@ -264,7 +259,7 @@ export const TestEditor: React.FC = () => {
       )}
       <ActionList
         actions={testData.actions}
-        onActionChange={handleActionChange}
+        onActionsChange={handleActionsChange}
         onRemoveAction={handleRemoveAction}
         onAddAction={handleAddAction}
         readonly={false}

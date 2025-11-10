@@ -93,17 +93,12 @@ export const FixtureEditor: React.FC = () => {
     }));
   }, []);
 
-  const handleActionChange = useCallback(
-    (index: number, field: keyof TestAction, value: string) => {
-      setFixtureData((prev: FixtureEditorData) => ({
-        ...prev,
-        actions: prev.actions.map((action: TestAction, idx: number) =>
-          idx === index ? { ...action, [field]: value } : action
-        ),
-      }));
-    },
-    []
-  );
+  const handleActionsChange = useCallback((newActions: TestAction[]) => {
+    setFixtureData((prev) => ({
+      ...prev,
+      actions: newActions,
+    }));
+  }, []);
 
   const handleClose = useCallback(() => {
     postMessage("close");
@@ -160,7 +155,7 @@ export const FixtureEditor: React.FC = () => {
 
       <ActionList
         actions={fixtureData.actions}
-        onActionChange={handleActionChange}
+        onActionsChange={handleActionsChange}
         onRemoveAction={handleRemoveAction}
         onAddAction={handleAddAction}
       />

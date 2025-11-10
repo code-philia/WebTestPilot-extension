@@ -22,14 +22,9 @@ import { CSS } from "@dnd-kit/utilities";
 
 interface ActionListProps {
   actions: TestAction[];
-  onActionChange?: (
-    index: number,
-    field: keyof TestAction,
-    value: string
-  ) => void;
+  onActionsChange?: (actions: TestAction[]) => void;
   onRemoveAction?: (index: number) => void;
   onAddAction?: () => void;
-  onActionsChange?: (actions: TestAction[]) => void;
   readonly?: boolean;
 }
 
@@ -41,9 +36,10 @@ const SortableActionCard: React.FC<{
     field: keyof TestAction,
     value: string
   ) => void;
+  onBlur: () => void;
   onRemoveAction: (index: number) => void;
   readonly: boolean;
-}> = ({ action, index, onActionChange, onRemoveAction, readonly }) => {
+}> = ({ action, index, onActionChange, onBlur, onRemoveAction, readonly }) => {
   const { t } = useLingui();
   const {
     attributes,
@@ -90,6 +86,7 @@ const SortableActionCard: React.FC<{
               : (e: ChangeEvent<HTMLInputElement>) =>
                   onActionChange(index, "action", e.target.value)
           }
+          onBlur={readonly ? undefined : onBlur}
           placeholder={t`Action`}
           readOnly={readonly}
           aria-readonly={readonly}
@@ -115,6 +112,7 @@ const SortableActionCard: React.FC<{
               : (e: ChangeEvent<HTMLInputElement>) =>
                   onActionChange(index, "expectedResult", e.target.value)
           }
+          onBlur={readonly ? undefined : onBlur}
           placeholder={t`Expected result`}
           readOnly={readonly}
           aria-readonly={readonly}
@@ -126,7 +124,6 @@ const SortableActionCard: React.FC<{
 
 export const ActionList: React.FC<ActionListProps> = ({
   actions,
-  onActionChange = () => {},
   onRemoveAction = () => {},
   onAddAction = () => {},
   onActionsChange = () => {},
@@ -140,6 +137,22 @@ export const ActionList: React.FC<ActionListProps> = ({
   React.useEffect(() => {
     setLocalActions(actions);
   }, [actions]);
+
+  const handleActionChange = (
+    index: number,
+    field: keyof TestAction,
+    value: string
+  ) => {
+    setLocalActions((prev) =>
+      prev.map((action, idx) =>
+        idx === index ? { ...action, [field]: value } : action
+      )
+    );
+  };
+
+  const handleBlur = () => {
+    onActionsChange(localActions);
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -217,7 +230,8 @@ export const ActionList: React.FC<ActionListProps> = ({
                     key={index}
                     action={action}
                     index={index}
-                    onActionChange={onActionChange}
+                    onActionChange={handleActionChange}
+                    onBlur={handleBlur}
                     onRemoveAction={onRemoveAction}
                     readonly={readonly}
                   />

@@ -249,7 +249,7 @@
   padding: 15px;
   background-color: var(--vscode-editor-background);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 46vw;
+  max-width: 48vw;
 }
 
 .test-header {
@@ -400,6 +400,15 @@
 }
 
 /* SingleRunner styles (moved from inline styles) */
+.sr-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden; /* prevent scrollbars on the container */
+  background-color: #071022; /* fallback */
+}
+
 .sr-topbar {
   display: flex;
   align-items: center;

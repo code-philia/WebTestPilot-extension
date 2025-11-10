@@ -177,8 +177,8 @@ export class TestRunnerPanel {
         this._cdpSession = client;
 
         await client.send('Page.startScreencast', {
-            format: 'png',
-            quality: 80,
+            format: 'jpeg',
+            quality: 60,
             maxWidth: 1920,
             maxHeight: 1080,
             everyNthFrame: 2

@@ -250,7 +250,7 @@ export const ParallelRunner: React.FC = () => {
     <div className="parallel-runner-root">
       <div className="header">
         <h1>
-          {t`Parallel Tests:`} {folderName || t`Loading...`}
+          {t`Parallel tests for folder:`} {folderName || t`Loading...`}
         </h1>
         <div>{connectionStatus}</div>
       </div>

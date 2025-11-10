@@ -118,7 +118,7 @@ export const SingleRunner: React.FC = () => {
 
 
   return (
-    <div>
+    <div className="sr-container">
       <div className="sr-topbar" role="banner">
         <div className="sr-boxes">
           <div className="sr-infobox sr-urlbox" title={url} aria-label={t`Current URL`}> 
