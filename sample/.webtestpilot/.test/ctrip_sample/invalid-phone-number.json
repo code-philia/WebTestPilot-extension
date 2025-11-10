@@ -17,9 +17,9 @@
     },
     {
       "action": "Click '获取验证码'",
-      "expectedResult": "An warning message is displayed"
+      "expectedResult": "A warning message is displayed"
     }
   ],
   "createdAt": "2025-10-25T06:19:05.681Z",
-  "updatedAt": "2025-11-09T13:15:00.896Z"
+  "updatedAt": "2025-11-10T02:57:16.258Z"
 }
