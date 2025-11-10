@@ -13,10 +13,7 @@ An AI-powered VS Code extension for automated web testing and test case generati
 ## Clone repo
 ```bash
 git clone --recurse-submodules https://github.com/code-philia/WebTestPilot-extension.git
-```
-
-Note: In case you cloned it normally, run the following to update:
-```bash
+cd WebTestPilot-extension
 git submodule sync --recursive
 git submodule update --init --recursive
 ```
@@ -33,7 +30,7 @@ git submodule update --init --recursive
 # Copy sample .env file
 cp .env.example .env
 
-# Input the API key to .env ...
+# Fill in the OPENAI_API_KEY in .env ...
 ```
 
 #### Install uv
@@ -62,6 +59,8 @@ source setup.sh
 # Windows
 powershell -ExecutionPolicy Bypass -File setup.ps1
 ```
+if you see the output below, it means the extension is installed successfully.
+![setup-result](./docs/assets/setup-result.png)
 
 ## Usage
 #### Start the Development Server
@@ -73,6 +72,9 @@ source browser.sh
 # Windows
 powershell -ExecutionPolicy Bypass -File browser.ps1
 ```
+you will see this output and a chrome browser instance opened.
+![browser-result](./docs/assets/browser-result.png)
+
 2. Open file `src/extension.ts`.
 3. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and search for command: "Debug: Start Debugging", click it and choose "VS Code Extension Development".
 ![start-debugging](./docs/assets/start-debugging.png)
@@ -87,9 +89,11 @@ powershell -ExecutionPolicy Bypass -File browser.ps1
 #### Run and Add Testcase
 1. Click the WebTestPilot extension icon in the sidebar.
 ![extension-icon](./docs/assets/extension-icon.png)
-2. Click "Run test" to run single test.
+2. Check the "Real Sites" option in the WebTestPilot sidebar for running test on real websites.
+![real-sites](./docs/assets/real-sites.png)
+3. Click "Run test" to run single test.
 ![extension-icon](./docs/assets/run-test.png)
-3. Write your own testcases in json format in the `sample` folder.
+4. Write your own testcases in json format in the `sample` folder, and back to WebTestPilot sidebar to run the test.
 
 
 ### In case of updates
@@ -107,7 +111,7 @@ sh setup.sh
 Second, restart the extension. Click the restart button here (after debugging started)
 ![restart-extension](./docs/assets/restart-extension.png)
 
-or, stop the debugger and start again
-![stop-extension](./docs/assets/stop-extension.png)
+or, stop the debugger and start again:
 
+![stop-extension](./docs/assets/stop-extension.png)
 ![start-debugging](./docs/assets/start-debugging.png)
