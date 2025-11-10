@@ -16,10 +16,10 @@
       "expectedResult": ""
     },
     {
-      "action": "Click '获取验证码'",
-      "expectedResult": "A warning message is displayed"
+      "action": "Click button 获取验证码",
+      "expectedResult": "Any warning message is displayed"
     }
   ],
   "createdAt": "2025-10-25T06:19:05.681Z",
-  "updatedAt": "2025-11-10T02:57:16.258Z"
+  "updatedAt": "2025-11-10T06:05:55.858Z"
 }
