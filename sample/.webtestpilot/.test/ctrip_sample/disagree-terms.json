@@ -9,9 +9,9 @@
     },
     {
       "action": "Click '不同意'",
-      "expectedResult": "Show homepage containing '酒店' and '机票' button"
+      "expectedResult": "Show a home page with search bar"
     }
   ],
   "createdAt": "2025-10-25T06:19:05.681Z",
-  "updatedAt": "2025-11-09T13:01:30.357Z"
+  "updatedAt": "2025-11-10T05:18:34.885Z"
 }
