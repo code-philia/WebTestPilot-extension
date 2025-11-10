@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useVSCode } from "../hooks/useVSCode";
 import "../App.css";
 import { useLingui } from "@lingui/react/macro";
+import { formatDuration, formatMultiline } from "../utilities/formatters";
 
 interface RunnerMessage {
   type?: string;
@@ -27,6 +28,10 @@ export const SingleRunner: React.FC = () => {
   const [statusEventType, setStatusEventType] = useState<string | undefined>(undefined);
   const [screenshotVersion, setScreenshotVersion] = useState(0);
   const [pulseStatus, setPulseStatus] = useState(false);
+  // timer state (minimal)
+  const [startAt, setStartAt] = useState<number | null>(null);
+  const [elapsedMs, setElapsedMs] = useState(0);
+  const [timerOn, setTimerOn] = useState(false);
 
   useEffect(() => {
     // tell extension we are ready once
@@ -56,11 +61,17 @@ export const SingleRunner: React.FC = () => {
         case "testStarted":
           setShowStop(true);
           setStopDisabled(false);
+          // start timer
+          setStartAt(Date.now());
+          setElapsedMs(0);
+          setTimerOn(true);
           break;
         case "testFinished":
         case "testStopped":
           setShowStop(false);
           setStopDisabled(false);
+          // stop timer
+          setTimerOn(false);
           break;
         case "statusUpdate":
           if (raw.displayMessage) {
@@ -73,6 +84,8 @@ export const SingleRunner: React.FC = () => {
           break;
         case "error":
           setLoading(false);
+          // stop timer on error
+          setTimerOn(false);
           break;
         default:
           break;
@@ -90,14 +103,19 @@ export const SingleRunner: React.FC = () => {
     return () => clearTimeout(t);
   }, [statusMessage]);
 
+  // update elapsed while timer running
+  useEffect(() => {
+    if (!timerOn || !startAt) return;
+    setElapsedMs(Date.now() - startAt); // sync immediately
+    const id = setInterval(() => setElapsedMs(Date.now() - startAt), 1000);
+    return () => clearInterval(id);
+  }, [timerOn, startAt]);
+
   const handleStop = () => {
     postMessage("stopTest");
     setStopDisabled(true);
   };
 
-  // Render helper: turn literal "\n" sequences into real line breaks for display
-  const formatMultiline = (s?: string | null) =>
-    (s ?? "").replaceAll("\\n", "\n");
 
   return (
     <div>
@@ -106,6 +124,10 @@ export const SingleRunner: React.FC = () => {
           <div className="sr-infobox sr-urlbox" title={url} aria-label={t`Current URL`}> 
             <div className="label">{t`Current URL`}</div>
             <div className="sr-url-text" data-testid="current-url">{formatMultiline(url.length > 40 ? url.slice(0, 60) + "..." : url)}</div>
+          </div>
+          <div className="sr-infobox" aria-live="polite" aria-label={t`Elapsed`}>
+            <div className="label">{t`Elapsed`}</div>
+            <div className="sr-step-text" data-testid="elapsed-time">{formatDuration(elapsedMs)}</div>
           </div>
           <div
             className={`sr-infobox step ${

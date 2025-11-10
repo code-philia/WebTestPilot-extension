@@ -177,8 +177,8 @@ export class TestRunnerPanel {
         this._cdpSession = client;
 
         await client.send('Page.startScreencast', {
-            format: 'jpeg',
-            quality: 60,
+            format: 'png',
+            quality: 80,
             maxWidth: 1920,
             maxHeight: 1080,
             everyNthFrame: 2
@@ -247,7 +247,6 @@ export class TestRunnerPanel {
             });
         } catch (error) {
             console.error("Error running test:", error);
-            vscode.window.showErrorMessage(`Failed to run test: ${error}`);
         }
     }
 

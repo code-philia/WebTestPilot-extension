@@ -41,3 +41,8 @@ export function parseStepNumber(message: string): number | null {
   }
   return null;
 }
+
+// Render helper: turn literal "\n" sequences into real line breaks for display
+export function formatMultiline(s?: string | null): string {
+  return (s ?? "").replaceAll("\\n", "\n");
+}
