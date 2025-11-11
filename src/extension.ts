@@ -1,17 +1,15 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import * as path from 'path';
-import { promises as fs } from 'fs';
-import { WebTestPilotTreeDataProvider, WebTestPilotTreeItem } from './treeDataProvider';
-import { TestItem, FixtureItem, EnvironmentItem, FolderItem, ENV_MENU_ID, FIXTURE_MENU_ID, TEST_MENU_ID } from './models';
-import { TestEditorPanel } from './panels/testEditorPanel';
-import { FixtureEditorPanel } from './panels/fixtureEditorPanel';
+import { ENV_MENU_ID, EnvironmentItem, FIXTURE_MENU_ID, FixtureItem, FolderItem, TEST_MENU_ID, TestItem } from './models';
 import { EnvironmentEditorPanel } from './panels/environmentEditorPanel';
-import { TestRunnerPanel } from './panels/testRunnerPanel';
+import { FixtureEditorPanel } from './panels/fixtureEditorPanel';
 import { ParallelTestPanel } from './panels/parallelTestPanel';
-import { WorkspaceRootService } from './services/workspaceRootService';
+import { TestEditorPanel } from './panels/testEditorPanel';
+import { TestRunnerPanel } from './panels/testRunnerPanel';
 import { EnvironmentService } from './services/environmentService';
+import { WorkspaceRootService } from './services/workspaceRootService';
+import { WebTestPilotTreeDataProvider, WebTestPilotTreeItem } from './treeDataProvider';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed

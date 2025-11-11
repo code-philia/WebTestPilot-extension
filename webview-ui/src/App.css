@@ -625,6 +625,49 @@
   opacity: 0.95;
 }
 
+/* Simple Rerun Test button */
+.sr-rerun-button {
+  background: #1d4ed8;
+  color: #fff;
+  border: 1px solid #1e3a8a;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.1;
+}
+
+.sr-rerun-button:hover:not([disabled]) {
+  background: #2563eb;
+  border-color: #1d4ed8;
+}
+
+.sr-rerun-button:active:not([disabled]) {
+  background: #1e40af;
+  border-color: #1e3a8a;
+}
+
+.sr-rerun-button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.sr-rerun-button[disabled] {
+  background: #374151;
+  color: #9ca3af;
+  cursor: not-allowed;
+  border-color: #4b5563;
+}
+
+.sr-rerun-button .sr-rerun-emoji {
+  font-size: 14px;
+  line-height: 1;
+}
+
 .sr-content {
   padding: 16px;
   padding-top: 0px;

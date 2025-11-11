@@ -68,7 +68,8 @@ export const SingleRunner: React.FC = () => {
           break;
         case "testFinished":
         case "testStopped":
-          setShowStop(false);
+          // Keep the action button visible but switch it to "Rerun"
+          setShowStop(true);
           setStopDisabled(false);
           // stop timer
           setTimerOn(false);
@@ -86,6 +87,8 @@ export const SingleRunner: React.FC = () => {
           setLoading(false);
           // stop timer on error
           setTimerOn(false);
+          // allow rerun after an error
+          setShowStop(true);
           break;
         default:
           break;
@@ -114,6 +117,10 @@ export const SingleRunner: React.FC = () => {
   const handleStop = () => {
     postMessage("stopTest");
     setStopDisabled(true);
+  };
+
+  const handleRerun = () => {
+    postMessage("rerunTest");
   };
 
 
@@ -149,14 +156,16 @@ export const SingleRunner: React.FC = () => {
         <div className="sr-right-controls">
           {showStop && (
             <button
-              onClick={handleStop}
-              disabled={stopDisabled}
-              className="sr-stop-button"
+              onClick={timerOn ? handleStop : handleRerun}
+              disabled={timerOn ? stopDisabled : false}
+              className={timerOn ? "sr-stop-button" : "sr-rerun-button"}
               aria-live="polite"
-              aria-busy={stopDisabled}
+              aria-busy={timerOn ? stopDisabled : false}
             >
-              <span className="sr-stop-emoji" aria-hidden>⏹️</span>
-              <span>{stopDisabled ? t`Stopping...` : t`Stop Test`}</span>
+              <span className={timerOn ? "sr-stop-emoji" : "sr-rerun-emoji"} aria-hidden>
+                {timerOn ? "⏹️" : "🔁"}
+              </span>
+              <span>{timerOn ? (stopDisabled ? t`Stopping...` : t`Stop Test`) : t`Rerun Test`}</span>
             </button>
           )}
         </div>

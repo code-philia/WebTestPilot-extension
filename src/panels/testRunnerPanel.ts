@@ -21,6 +21,7 @@ export class TestRunnerPanel {
     private _cdpSession: CDPSession | undefined;
     private _targetId: string | undefined;
     private _testEngine: TestEngineService | undefined;
+    private _currentTestItem: TestItem | undefined;
     private _progress:
     | vscode.Progress<{
         message?: string;
@@ -53,11 +54,41 @@ export class TestRunnerPanel {
                 case "stopTest":
                     this._stopTest();
                     return;
+                case "rerunTest":
+                    // run the saved test again
+                    this._handleRerun().catch((err) => {
+                        console.error("Failed to rerun test:", err);
+                        vscode.window.showErrorMessage(`Failed to rerun test: ${err}`);
+                    });
+                    return;
                 }
             },
             undefined,
             this._disposables
         );
+    }
+
+    /**
+     * Handle rerun request from webview
+     */
+    private async _handleRerun(): Promise<void> {
+        if (!this._currentTestItem) {
+            vscode.window.showWarningMessage("No test available to rerun");
+            return;
+        }
+
+        // Ensure we still have a browser connection and target id
+        if (!this._targetId) {
+            vscode.window.showWarningMessage("Browser connection lost. Reconnecting...");
+            const cdpEndpoint = vscode.workspace
+                .getConfiguration("webtestpilot")
+                .get<string>("cdpEndpoint") || "http://localhost:9222";
+            await this._connectToBrowser(cdpEndpoint);
+            await this._waitForTargetId();
+        }
+
+        // Run the test again
+        await this._runTest(this._currentTestItem);
     }
 
     /**
@@ -233,6 +264,9 @@ export class TestRunnerPanel {
             TestRunnerPanel.currentPanel = new TestRunnerPanel(
                 panel
             );
+
+            // Save the test item so we can rerun later from the webview
+            TestRunnerPanel.currentPanel._currentTestItem = testItem;
 
             // Wait for browser connection to be established and targetId to be available
             await TestRunnerPanel.currentPanel._waitForTargetId();
