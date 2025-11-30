@@ -10,6 +10,9 @@ An AI-powered VS Code extension for automated web testing and test case generati
 - [Installation](#setup)
 - [Usage](#usage)
 
+## Demo
+[![Demo](https://img.youtube.com/vi/nKLzdujmIbE/maxresdefault.jpg)](https://youtu.be/nKLzdujmIbE)
+
 ## Clone repo
 ```bash
 git clone --recurse-submodules https://github.com/code-philia/WebTestPilot-extension.git
@@ -115,3 +118,20 @@ or, stop the debugger and start again:
 
 ![stop-extension](./docs/assets/stop-extension.png)
 ![start-debugging](./docs/assets/start-debugging.png)
+
+
+## Instructions how to use WebTestPilot
+
+A walkthrough demo of WebTestPilot
+[![Demo](https://img.youtube.com/vi/nKLzdujmIbE/maxresdefault.jpg)](https://youtu.be/nKLzdujmIbE)
+
+There are 3 main functionalities of WebTestPilot:
+- Test cases: steps to perform (i.e. "Click Login button") and its expected result (i.e. "Login screen show up").
+- Fixtures: shared common steps before a test case, i.e. many test cases need login, we can have a fixture for login.
+- Environment variables: we define common variables such as WEBSITE_URL, USERNAME, PASSWORD, ... these can be used in fixtures and test cases in the form of `${WEBSITE_URL}`.
+
+Examples: fixtures, testcases and environments in ./sample.
+
+This image shows how all three functionalities can be used together.
+
+![webtestpilot](./docs/assets/webtestpilot.png)
