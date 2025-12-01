@@ -2,7 +2,7 @@
 echo "Updating code repositories..."
 git branch --set-upstream-to=origin/main
 git pull --recurse-submodules
-git submodule update --init --recursive --remote
+git submodule update --init --recursive
 
 # Setup WebTestPilot + BAML
 echo "Setting up WebTestPilot..."
