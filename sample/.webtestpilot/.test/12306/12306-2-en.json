@@ -1,6 +1,6 @@
 {
   "id": "test-3-en",
-  "name": "Business Travel Service - Closed Shop Verification",
+  "name": "2 - Business Travel Service - Closed Shop Verification",
   "url": "${12306_URL}",
   "actions": [
     {

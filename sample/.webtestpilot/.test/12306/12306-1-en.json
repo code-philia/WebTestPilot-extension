@@ -1,6 +1,6 @@
 {
   "id": "test-2-en",
-  "name": "Business Travel Service - Food & Specialty Ordering",
+  "name": "1 - Business Travel Service - Food & Specialty Ordering",
   "url": "${12306_URL}",
   "actions": [
     {
