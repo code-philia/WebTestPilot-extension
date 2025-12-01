@@ -339,9 +339,11 @@ export class TestRunnerPanel {
                         this._targetId!
                     );
 
-                    // Update webview to show stop button
+                    // Update webview to show stop button and send step metadata
+                    const totalSteps = testItem.actions?.length || 0;
                     this._panel.webview.postMessage({
                         type: "testStarted",
+                        totalSteps,
                     });
 
                     let stdoutData = "";
@@ -403,8 +405,7 @@ export class TestRunnerPanel {
                                     });
 
                                 this._panel.webview.postMessage({
-                                    type: "statusUpdate",
-                                    eventType: "PASSED",
+                                    type: "testFinished",
                                 });
 
                                 resolve();
@@ -424,8 +425,7 @@ export class TestRunnerPanel {
                                     });
 
                                 this._panel.webview.postMessage({
-                                    type: "statusUpdate",
-                                    eventType: "FAILED"
+                                    type: "testFinished",
                                 });
                                 reject(new Error(`Python process exited with code ${code}`));
                             }
@@ -469,54 +469,69 @@ export class TestRunnerPanel {
         const events = parseLogEvents(text);
         for (const ev of events) {
             let message = "";
-            let eventType = "";
+            // Build payload once, send once at the end
+            const payload: {
+                type: "stepUpdate";
+                stepNumber?: number;
+                stepTitle?: string;
+                stepStatus?: "started" | "passed" | "failed";
+                currentAction?: string;
+                error?: string;
+            } = { type: "stepUpdate" };
 
             if (ev.type === "step") {
-                const stepNumber = ev.step;
+                payload.stepNumber = ev.step;
                 if (ev.status === "started") {
-                    message = `Step ${stepNumber}: ${ev.action || ""}`;
+                    message = ev.action || "";
+                    payload.stepTitle = ev.action || "";
+                    payload.stepStatus = "started";
                 } else if (ev.status === "passed") {
-                    message = `Step ${stepNumber}: ✓ Passed`;
+                    message = `Step ${ev.step}: ✓ Passed`;
+                    payload.stepStatus = "passed";
                 } else if (ev.status === "failed") {
-                    message = `Step ${stepNumber}: ❌ Failed - ${ev.error || "error"}`;
+                    message = `Step ${ev.step}: ❌ Failed - ${ev.error || "error"}`;
+                    payload.stepStatus = "failed";
+                    payload.error = ev.error;
                 }
             } else if (ev.type === "verification") {
-                const stepNumber = ev.step;
-
+                payload.stepNumber = ev.step;
                 if (ev.status === "verifying") {
-                    message = `Step ${stepNumber}: Verifying - ${ev.expectation || ""}`;
+                    message = `Verifying: ${ev.expectation || ""}`;
+                    payload.currentAction = message;
                 } else if (ev.status === "verifyPassed") {
-                    message = `Step ${stepNumber}: ✓ Completed Verification`;
+                    message = `Step ${ev.step}: ✓ Verification passed`;
+                    payload.stepStatus = "passed";
                     vscode.window.showInformationMessage(message);
                 } else if (ev.status === "verifyFailed") {
-                    message = `Step ${stepNumber}: ❌ Failed - ${
-                        ev.error || "verification failed"
-                    }`;
+                    message = `Step ${ev.step}: ❌ Verification failed - ${ev.error || ""}`;
+                    payload.stepStatus = "failed";
+                    payload.error = ev.error || "verification failed";
                 }
             } else if (ev.type === "bug") {
                 message = `Bug reported: ${ev.message}`;
-                eventType = "bug";
+                payload.currentAction = message;
                 vscode.window.showErrorMessage(message);
             } else if (ev.type === "locating" || ev.type === "abstract") {
                 message = ev.raw;
+                payload.currentAction = ev.raw;
             } else if (ev.type === "re-identifying") {
                 message = "Checking page re-identification...";
+                payload.currentAction = message;
             } else if (ev.type === "code") {
-                message = `Executing proposed code, ${ev.raw}`;
+                message = `Executing action: ${ev.raw}`;
+                payload.currentAction = message;
             } else if (ev.type === "proposing-action") {
                 message = "Reasoning next action...";
+                payload.currentAction = message;
             }
 
             if (message !== "") {
                 console.log(message);
-                this._progress.report({
-                    message: message,
-                });
-                this._panel.webview.postMessage({
-                    type: "statusUpdate",
-                    displayMessage: message,
-                    eventType,
-                });
+                this._progress.report({ message });
+                // Send unified message only if we have meaningful updates
+                if (payload.stepNumber !== undefined || payload.currentAction || payload.stepStatus) {
+                    this._panel.webview.postMessage(payload);
+                }
             }
         }
     }

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { VSCodeProgressRing } from "@vscode/webview-ui-toolkit/react";
 import { useVSCode } from "../hooks/useVSCode";
 import "../App.css";
 import { useLingui } from "@lingui/react/macro";
-import { formatDuration, formatMultiline } from "../utilities/formatters";
+import { formatDuration } from "../utilities/formatters";
 
 interface RunnerMessage {
   type?: string;
@@ -11,8 +12,13 @@ interface RunnerMessage {
   data?: string; // screenshot base64
   level?: string;
   text?: string;
-  displayMessage?: string;
-  eventType?: "bug" | "PASSED" | "FAILED";
+  // Step tracking fields (unified stepUpdate)
+  totalSteps?: number;
+  stepNumber?: number;
+  stepTitle?: string;
+  stepStatus?: "started" | "passed" | "failed";
+  currentAction?: string;
+  error?: string;
 }
 
 export const SingleRunner: React.FC = () => {
@@ -24,10 +30,13 @@ export const SingleRunner: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showStop, setShowStop] = useState(false);
   const [stopDisabled, setStopDisabled] = useState(false);
-  const [statusMessage, setStatusMessage] = useState("");
-  const [statusEventType, setStatusEventType] = useState<string | undefined>(undefined);
-  const [screenshotVersion, setScreenshotVersion] = useState(0);
-  const [pulseStatus, setPulseStatus] = useState(false);
+  // Step tracking state
+  const [totalSteps, setTotalSteps] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStepTitle, setCurrentStepTitle] = useState("");
+  const [currentAction, setCurrentAction] = useState("");
+  const [stepStatus, setStepStatus] = useState<"running" | "passed" | "failed" | "idle">("idle");
+  const [testResult, setTestResult] = useState<"PASSED" | "FAILED" | null>(null);
   // timer state (minimal)
   const [startAt, setStartAt] = useState<number | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
@@ -47,7 +56,6 @@ export const SingleRunner: React.FC = () => {
         case "screenshot":
           if (raw.data) {
             setScreenshot(`data:image/png;base64,${raw.data}`);
-            setScreenshotVersion((v) => v + 1);
             setLoading(false);
           }
           break;
@@ -61,27 +69,62 @@ export const SingleRunner: React.FC = () => {
         case "testStarted":
           setShowStop(true);
           setStopDisabled(false);
+          // Reset step tracking
+          setTotalSteps(raw.totalSteps || 0);
+          setCurrentStep(0);
+          setCurrentStepTitle("");
+          setCurrentAction("");
+          setStepStatus("idle");
+          setTestResult(null);
           // start timer
           setStartAt(Date.now());
           setElapsedMs(0);
           setTimerOn(true);
           break;
+        case "stepUpdate":
+          // Handle step number and title (when step starts)
+          if (raw.stepNumber !== undefined) {
+            setCurrentStep(raw.stepNumber);
+          }
+          if (raw.stepTitle) {
+            setCurrentStepTitle(raw.stepTitle);
+          }
+          // Handle step status changes
+          if (raw.stepStatus === "started") {
+            setCurrentAction("");
+            setStepStatus("running");
+          } else if (raw.stepStatus === "passed") {
+            setStepStatus("passed");
+          } else if (raw.stepStatus === "failed") {
+            setStepStatus("failed");
+            if (raw.error) {
+              setCurrentAction(`Error: ${raw.error}`);
+            }
+          }
+          // Handle current action updates
+          if (raw.currentAction) {
+            setCurrentAction(raw.currentAction);
+          }
+          break;
         case "testFinished":
-        case "testStopped":
           // Keep the action button visible but switch it to "Rerun"
           setShowStop(true);
           setStopDisabled(false);
           // stop timer
           setTimerOn(false);
+          // Determine test result based on step status or explicit result
+          if (stepStatus === "failed") {
+            setTestResult("FAILED");
+          } else if (currentStep === totalSteps && stepStatus === "passed") {
+            setTestResult("PASSED");
+          } else if (currentStep === totalSteps) {
+            setTestResult("PASSED");
+          }
           break;
-        case "statusUpdate":
-          if (raw.displayMessage) {
-            setStatusMessage(raw.displayMessage);
-            setStatusEventType(undefined);
-          }
-          if (raw.eventType) {
-            setStatusEventType(raw.eventType);
-          }
+        case "testStopped":
+          setShowStop(true);
+          setStopDisabled(false);
+          setTimerOn(false);
           break;
         case "error":
           setLoading(false);
@@ -97,14 +140,6 @@ export const SingleRunner: React.FC = () => {
 
     return unsubscribe;
   }, [onMessage, postMessage]);
-
-  // Pulse highlight when status updates
-  useEffect(() => {
-    if (!statusMessage) return;
-    setPulseStatus(true);
-    const t = setTimeout(() => setPulseStatus(false), 800);
-    return () => clearTimeout(t);
-  }, [statusMessage]);
 
   // update elapsed while timer running
   useEffect(() => {
@@ -126,64 +161,89 @@ export const SingleRunner: React.FC = () => {
 
   return (
     <div className="sr-container">
-      <div className="sr-topbar" role="banner">
-        <div className="sr-boxes">
-          <div className="sr-infobox sr-urlbox" title={url} aria-label={t`Current URL`}> 
-            <div className="label">{t`Current URL`}</div>
-            <div className="sr-url-text" data-testid="current-url">{formatMultiline(url.length > 40 ? url.slice(0, 60) + "..." : url)}</div>
-          </div>
-          <div className="sr-infobox" aria-live="polite" aria-label={t`Elapsed`}>
-            <div className="label">{t`Elapsed`}</div>
-            <div className="sr-step-text" data-testid="elapsed-time">{formatDuration(elapsedMs)}</div>
-          </div>
-          <div
-            className={`sr-infobox step ${
-              statusEventType === "PASSED"
-                ? "is-passed"
-                : statusEventType === "FAILED"
-                ? "is-failed"
-                : statusEventType === "bug"
-                ? "is-bug"
-                : ""
-            } sr-breathe ${pulseStatus ? "sr-pulse" : ""}`}
-            aria-label={t`Step Update`}
-            data-status={statusEventType || "none"}
-          >
-            <div className="label">{t`Step Update`}</div>
-            <div className="sr-step-text" data-testid="step-update">{formatMultiline(statusMessage) || t`No updates yet`}</div>
-          </div>
-        </div>
-        <div className="sr-right-controls">
-          {showStop && (
-            <button
-              onClick={timerOn ? handleStop : handleRerun}
-              disabled={timerOn ? stopDisabled : false}
-              className={timerOn ? "sr-stop-button" : "sr-rerun-button"}
-              aria-live="polite"
-              aria-busy={timerOn ? stopDisabled : false}
-            >
-              <span className={timerOn ? "sr-stop-emoji" : "sr-rerun-emoji"} aria-hidden>
-                {timerOn ? "⏹️" : "🔁"}
+      <div className="sr-topbar-compact" role="banner">
+        {/* Step Progress - compact inline */}
+        <div className="sr-progress-compact">
+          {totalSteps > 0 ? (
+            <>
+              <span className="sr-step-indicator">
+                {totalSteps > 0
+                  ? (
+                    currentStep > 0
+                      ? `${t`Step`} ${currentStep}/${totalSteps}`
+                      : `${t`Step`} 0/${totalSteps}`
+                  )
+                  : `--`}
               </span>
-              <span>{timerOn ? (stopDisabled ? t`Stopping...` : t`Stop Test`) : t`Rerun Test`}</span>
-            </button>
+              <div className="sr-step-bar-compact">
+                {Array.from({ length: totalSteps }, (_, i) => {
+                  const stepNum = i + 1;
+                  let dotClass = "sr-dot";
+                  if (stepNum < currentStep) dotClass += " done";
+                  else if (stepNum === currentStep) {
+                    dotClass += stepStatus === "passed" ? " done" : stepStatus === "failed" ? " fail" : " active";
+                  }
+                  return <div key={stepNum} className={dotClass} />;
+                })}
+              </div>
+            </>
+          ) : (
+            <span className="sr-step-indicator">--</span>
           )}
         </div>
+
+        {/* Test Result Badge */}
+        {testResult && (
+          <div className={`sr-result-badge ${testResult.toLowerCase()}`}>
+            {testResult === "PASSED" ? "✓ PASSED" : "✗ FAILED"}
+          </div>
+        )}
+
+        {/* URL - compact */}
+        <div className="sr-url-compact" title={url}>
+          {url.length > 50 ? url.slice(0, 50) + "..." : url}
+        </div>
+
+        {/* Elapsed - compact */}
+        <div className="sr-elapsed-compact">
+          {formatDuration(elapsedMs)}
+        </div>
+
+        {/* Step Title */}
+        <div className={`sr-title-compact ${stepStatus === "passed" ? "done" : stepStatus === "failed" ? "fail" : ""}`}>
+          {currentStepTitle || "Waiting..."}
+        </div>
+
+        {/* Current Action */}
+        <div className="sr-action-compact">
+          {currentAction || "--"}
+        </div>
+
+        {/* Stop/Rerun button - compact */}
+        {showStop && (
+          <button
+            onClick={timerOn ? handleStop : handleRerun}
+            disabled={timerOn ? stopDisabled : false}
+            className={`sr-btn-compact ${timerOn ? "stop" : "rerun"}`}
+          >
+            {timerOn ? (stopDisabled ? "..." : "■") : "↻"}
+          </button>
+        )}
       </div>
+
       <div className="sr-content">
         {loading && (
-          <div className="sr-loading" role="status" aria-live="polite">
-            <span className="sr-spinner" />
-            {t`Connecting to remote browser...`}
+          <div className="sr-loading-compact" role="status" aria-live="polite">
+            <VSCodeProgressRing />
+            <span>Connecting...</span>
           </div>
         )}
         {screenshot && (
           <img
             id="screenshot"
             src={screenshot}
-            alt={t`Live screenshot`}
+            alt="Live screenshot"
             className="sr-screenshot"
-            key={screenshotVersion}
             data-testid="live-screenshot"
           />
         )}
