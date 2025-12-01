@@ -36,7 +36,7 @@ export const SingleRunner: React.FC = () => {
   const [currentStepTitle, setCurrentStepTitle] = useState("");
   const [currentAction, setCurrentAction] = useState("");
   const [stepStatus, setStepStatus] = useState<"running" | "passed" | "failed" | "idle">("idle");
-  const [testResult, setTestResult] = useState<"PASSED" | "FAILED" | null>(null);
+  const [testResult, setTestResult] = useState<"PASSED" | "FAILED" | "STOPPED" | null>(null);
   // timer state (minimal)
   const [startAt, setStartAt] = useState<number | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
@@ -125,6 +125,7 @@ export const SingleRunner: React.FC = () => {
           setShowStop(true);
           setStopDisabled(false);
           setTimerOn(false);
+          setTestResult("STOPPED");
           break;
         case "error":
           setLoading(false);
@@ -195,7 +196,7 @@ export const SingleRunner: React.FC = () => {
         {/* Test Result Badge */}
         {testResult && (
           <div className={`sr-result-badge ${testResult.toLowerCase()}`}>
-            {testResult === "PASSED" ? "✓ PASSED" : "✗ FAILED"}
+            {testResult === "PASSED" ? "✓ PASSED" : testResult === "FAILED" ? "✗ FAILED" : "■ STOPPED"}
           </div>
         )}
 
