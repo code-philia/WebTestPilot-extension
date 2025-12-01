@@ -115,9 +115,7 @@ export const SingleRunner: React.FC = () => {
           // Determine test result based on step status or explicit result
           if (stepStatus === "failed") {
             setTestResult("FAILED");
-          } else if (currentStep === totalSteps && stepStatus === "passed") {
-            setTestResult("PASSED");
-          } else if (currentStep === totalSteps) {
+          } else if (stepStatus === "passed") {
             setTestResult("PASSED");
           }
           break;
