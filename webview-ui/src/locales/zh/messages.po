@@ -25,19 +25,19 @@ msgstr ""
 #~ msgid "🟢 Connected"
 #~ msgstr "🟢 已连接"
 
-#: src/components/ActionList.tsx:90
+#: src/components/ActionList.tsx:89
 msgid "Action"
 msgstr "操作"
 
-#: src/components/ActionList.tsx:190
+#: src/components/ActionList.tsx:189
 msgid "Actions"
 msgstr "操作"
 
-#: src/components/ActionList.tsx:197
+#: src/components/ActionList.tsx:198
 msgid "Add Action"
 msgstr "添加操作"
 
-#: src/pages/EnvironmentEditor.tsx:207
+#: src/pages/EnvironmentEditor.tsx:210
 msgid "Add Variable"
 msgstr "添加变量"
 
@@ -61,9 +61,9 @@ msgstr "清除所有标签页"
 #~ msgid "Clear Finished"
 #~ msgstr "清除已完成"
 
-#: src/pages/EnvironmentEditor.tsx:178
-#: src/pages/FixtureEditor.tsx:138
-#: src/pages/TestEditor.tsx:205
+#: src/pages/EnvironmentEditor.tsx:180
+#: src/pages/FixtureEditor.tsx:140
+#: src/pages/TestEditor.tsx:208
 msgid "Close"
 msgstr "关闭"
 
@@ -76,8 +76,8 @@ msgid "Connecting to browser..."
 msgstr "正在连接到浏览器…"
 
 #: src/pages/SingleRunner.tsx:168
-msgid "Connecting to remote browser..."
-msgstr "正在连接到远程浏览器…"
+#~ msgid "Connecting to remote browser..."
+#~ msgstr "正在连接到远程浏览器…"
 
 #: src/pages/SingleRunner.tsx:64
 #~ msgid "Connection failed"
@@ -85,10 +85,10 @@ msgstr "正在连接到远程浏览器…"
 
 #: src/pages/SingleRunner.tsx:124
 #: src/pages/SingleRunner.tsx:125
-msgid "Current URL"
-msgstr "当前 URL"
+#~ msgid "Current URL"
+#~ msgstr "当前 URL"
 
-#: src/pages/EnvironmentEditor.tsx:260
+#: src/pages/EnvironmentEditor.tsx:264
 msgid "Delete"
 msgstr "删除"
 
@@ -131,10 +131,10 @@ msgstr "编辑测试：{0}"
 
 #: src/pages/SingleRunner.tsx:128
 #: src/pages/SingleRunner.tsx:129
-msgid "Elapsed"
-msgstr "已用时间"
+#~ msgid "Elapsed"
+#~ msgstr "已用时间"
 
-#: src/pages/EnvironmentEditor.tsx:185
+#: src/pages/EnvironmentEditor.tsx:187
 msgid "Environment Name"
 msgstr "环境名称"
 
@@ -142,11 +142,11 @@ msgstr "环境名称"
 msgid "Environment name is required"
 msgstr "环境名称为必填项"
 
-#: src/pages/EnvironmentEditor.tsx:205
+#: src/pages/EnvironmentEditor.tsx:207
 msgid "Environment Variables"
 msgstr "环境变量"
 
-#: src/components/ActionList.tsx:116
+#: src/components/ActionList.tsx:115
 msgid "Expected result"
 msgstr "预期结果"
 
@@ -154,11 +154,11 @@ msgstr "预期结果"
 msgid "Failed"
 msgstr "失败"
 
-#: src/pages/TestEditor.tsx:238
+#: src/pages/TestEditor.tsx:241
 msgid "Fixture"
 msgstr "夹具"
 
-#: src/pages/FixtureEditor.tsx:145
+#: src/pages/FixtureEditor.tsx:147
 msgid "Fixture Name"
 msgstr "夹具名称"
 
@@ -166,21 +166,21 @@ msgstr "夹具名称"
 msgid "Fixture name is required"
 msgstr "夹具名称为必填项"
 
-#: src/components/ActionList.tsx:190
+#: src/components/ActionList.tsx:189
 msgid "From fixture"
 msgstr "来自夹具"
 
-#: src/components/ActionList.tsx:194
+#: src/components/ActionList.tsx:193
 msgid "Hide"
 msgstr "隐藏"
 
-#: src/pages/TestEditor.tsx:232
+#: src/pages/TestEditor.tsx:235
 msgid "https://example.com"
 msgstr "https://example.com"
 
 #: src/pages/SingleRunner.tsx:175
-msgid "Live screenshot"
-msgstr "实时截图"
+#~ msgid "Live screenshot"
+#~ msgstr "实时截图"
 
 #: src/pages/ParallelRunner.tsx:253
 msgid "Loading..."
@@ -190,35 +190,35 @@ msgstr "加载中..."
 #~ msgid "Logs"
 #~ msgstr "日志"
 
-#: src/pages/EnvironmentEditor.tsx:192
+#: src/pages/EnvironmentEditor.tsx:194
 msgid "My Environment"
 msgstr "我的环境"
 
-#: src/pages/FixtureEditor.tsx:152
+#: src/pages/FixtureEditor.tsx:154
 msgid "My Fixture"
 msgstr "我的夹具"
 
-#: src/pages/TestEditor.tsx:219
+#: src/pages/TestEditor.tsx:222
 msgid "My Test"
 msgstr "我的测试"
 
-#: src/components/ActionList.tsx:205
+#: src/components/ActionList.tsx:207
 msgid "No actions defined in fixtures."
 msgstr "夹具中未定义任何操作。"
 
-#: src/components/ActionList.tsx:206
+#: src/components/ActionList.tsx:208
 msgid "No actions defined. Click \"Add Action\" to get started."
 msgstr "未定义任何操作。点击“添加操作”开始。"
 
-#: src/pages/TestEditor.tsx:245
+#: src/pages/TestEditor.tsx:248
 msgid "No Fixture"
 msgstr "无夹具"
 
 #: src/pages/SingleRunner.tsx:146
-msgid "No updates yet"
-msgstr "暂无更新"
+#~ msgid "No updates yet"
+#~ msgstr "暂无更新"
 
-#: src/pages/EnvironmentEditor.tsx:223
+#: src/pages/EnvironmentEditor.tsx:226
 msgid "No variables defined. Click \"Add Variable\" to create one."
 msgstr "未定义任何变量。点击\"添加变量\"创建一个。"
 
@@ -238,11 +238,11 @@ msgstr "文件夹的并行测试："
 msgid "Passed"
 msgstr "通过"
 
-#: src/pages/EnvironmentEditor.tsx:258
+#: src/pages/EnvironmentEditor.tsx:261
 msgid "Remove variable"
 msgstr "移除变量"
 
-#: src/pages/TestEditor.tsx:202
+#: src/pages/TestEditor.tsx:204
 msgid "Run Test"
 msgstr "运行测试"
 
@@ -250,26 +250,31 @@ msgstr "运行测试"
 msgid "Running"
 msgstr "运行中"
 
-#: src/pages/EnvironmentEditor.tsx:175
+#: src/pages/EnvironmentEditor.tsx:176
 msgid "Save Environment"
 msgstr "保存环境"
 
-#: src/pages/FixtureEditor.tsx:135
+#: src/pages/FixtureEditor.tsx:136
 msgid "Save Fixture"
 msgstr "保存夹具"
 
-#: src/pages/TestEditor.tsx:199
+#: src/pages/TestEditor.tsx:200
 msgid "Save Test"
 msgstr "保存测试"
 
-#: src/components/ActionList.tsx:194
+#: src/components/ActionList.tsx:193
 msgid "Show"
 msgstr "显示"
 
+#: src/pages/SingleRunner.tsx:172
+#: src/pages/SingleRunner.tsx:173
+msgid "Step"
+msgstr "步骤"
+
 #: src/pages/SingleRunner.tsx:142
 #: src/pages/SingleRunner.tsx:145
-msgid "Step Update"
-msgstr "步骤更新"
+#~ msgid "Step Update"
+#~ msgstr "步骤更新"
 
 #: src/components/TestCard.tsx:91
 msgid "Steps:"
@@ -284,16 +289,16 @@ msgid "Stop All Tests"
 msgstr "停止所有测试"
 
 #: src/pages/SingleRunner.tsx:159
-msgid "Stop Test"
-msgstr "停止测试"
+#~ msgid "Stop Test"
+#~ msgstr "停止测试"
 
 #: src/components/TestSummary.tsx:38
 msgid "Stopped"
 msgstr "已停止"
 
 #: src/pages/SingleRunner.tsx:159
-msgid "Stopping..."
-msgstr "正在停止…"
+#~ msgid "Stopping..."
+#~ msgstr "正在停止…"
 
 #: src/pages/SingleRunner.tsx:31
 #~ msgid "Streaming live from remote browser"
@@ -307,7 +312,7 @@ msgstr "标签页 #"
 #~ msgid "Test finished"
 #~ msgstr "测试完成"
 
-#: src/pages/TestEditor.tsx:212
+#: src/pages/TestEditor.tsx:215
 msgid "Test Name"
 msgstr "测试名称"
 
@@ -331,23 +336,23 @@ msgstr "测试总数"
 #~ msgid "Unknown Page"
 #~ msgstr "未知页面"
 
-#: src/pages/TestEditor.tsx:225
+#: src/pages/TestEditor.tsx:228
 msgid "URL"
 msgstr "URL"
 
-#: src/pages/EnvironmentEditor.tsx:251
+#: src/pages/EnvironmentEditor.tsx:254
 msgid "value"
 msgstr "值"
 
-#: src/pages/EnvironmentEditor.tsx:215
+#: src/pages/EnvironmentEditor.tsx:218
 msgid "Value"
 msgstr "值"
 
-#: src/pages/EnvironmentEditor.tsx:214
+#: src/pages/EnvironmentEditor.tsx:217
 msgid "Variable"
 msgstr "变量"
 
-#: src/pages/EnvironmentEditor.tsx:240
+#: src/pages/EnvironmentEditor.tsx:243
 msgid "VARIABLE_NAME"
 msgstr "变量名称"
 

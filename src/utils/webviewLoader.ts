@@ -5,14 +5,17 @@ import * as path from "path";
 const NONCE = "webtestpilot";
 
 /**
- * Load and post-process the built webview HTML from a dist directory path.
- * This is useful for panels that don't have the extensionUri available.
+ * Load and post-process the built webview HTML using the extensionUri to resolve the dist folder.
  */
-export function loadWebviewHtmlFromDist(
-    distPath: string,
+export function loadWebviewHtml(
     webview: vscode.Webview,
     page: string
 ): string {
+    const extensionUri = (globalThis as any).extensionUri as vscode.Uri;
+    const distUri = vscode.Uri.joinPath(extensionUri, "webview-ui", "dist");
+    const distPath = distUri.fsPath;
+
+    // Post-processing
     const indexHtmlPath = path.join(distPath, "index.html");
     if (!fs.existsSync(indexHtmlPath)) {
         throw new Error(`Webview bundle not found at ${indexHtmlPath}`);
@@ -20,13 +23,18 @@ export function loadWebviewHtmlFromDist(
 
     let html = fs.readFileSync(indexHtmlPath, "utf-8");
     const cspMeta = `<meta
-  content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource} 'unsafe-inline'; font-src ${webview.cspSource}; script-src 'nonce-${NONCE}' 'unsafe-inline'; connect-src ${webview.cspSource} https:;">
+  content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource} 'unsafe-inline'; font-src ${webview.cspSource} data:; script-src 'nonce-${NONCE}' 'unsafe-inline'; connect-src ${webview.cspSource} https:;">
 `;
     //   const cspMeta = `<meta
     //   http-equiv="Content-Security-Policy"
     //   content="default-src 'none'; img-src ${webview.cspSource} https:; script-src ${webview.cspSource}; style-src ${webview.cspSource};">
     // `;
-    html = html.replace("</head>", `${cspMeta}</head>`);
+    const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'));
+
+    html = html.replace("</head>", `
+        ${cspMeta}
+        <link href="${codiconsUri}" rel="stylesheet" />
+    </head>`);
 
     // Inject both the current page and the VS Code UI language into the webview global
     // `vscode.env.language` will be serialized so the webview can detect the user's language
@@ -37,24 +45,9 @@ export function loadWebviewHtmlFromDist(
 
     // Ensure script tags include nonce
     html = html.replace(/<script(\s)/g, `<script nonce="${NONCE}"$1`);
-
-    const distUri = vscode.Uri.file(distPath);
-    html = _rewriteResourceUrls(html, distUri, webview, NONCE);
+    html = _rewriteResourceUrls(html, vscode.Uri.file(distPath), webview, NONCE);
 
     return html;
-}
-
-/**
- * Load and post-process the built webview HTML using the extensionUri to resolve the dist folder.
- */
-export function loadWebviewHtml(
-    webview: vscode.Webview,
-    page: string
-): string {
-    const extensionUri = (globalThis as any).extensionUri as vscode.Uri;
-    const distUri = vscode.Uri.joinPath(extensionUri, "webview-ui", "dist");
-    const distPath = distUri.fsPath;
-    return loadWebviewHtmlFromDist(distPath, webview, page);
 }
 
 function _rewriteResourceUrls(

@@ -18,11 +18,12 @@
     "install:all": "yarn && cd webview-ui && yarn",
     "start:webview": "cd webview-ui && yarn start",
     "build:webview": "cd webview-ui && yarn build",
+    "i18n:webview": "cd webview-ui && yarn i18n:extract && yarn i18n:compile",
     "vscode:prepublish": "yarn build:webview && yarn package",
     "compile": "yarn check-types && yarn lint && node esbuild.js",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "yarn build:webview && yarn  check-types && yarn lint && node esbuild.js --production",
+    "package": "yarn i18n:webview && yarn build:webview && yarn check-types && yarn lint && node esbuild.js --production",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "yarn compile-tests && yarn compile && yarn lint",
@@ -31,6 +32,7 @@
     "test": "vscode-test"
   },
   "dependencies": {
+    "@vscode/codicons": "^0.0.43",
     "playwright-core": "^1.40.0"
   },
   "devDependencies": {
