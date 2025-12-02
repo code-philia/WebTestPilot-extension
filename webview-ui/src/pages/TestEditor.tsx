@@ -196,10 +196,10 @@ export const TestEditor: React.FC = () => {
         </div>
         <div className="header-actions">
           <VSCodeButton appearance="primary" onClick={handleSave}>
-            {t`Save Test`}
+            {t`Save`}
           </VSCodeButton>
           <VSCodeButton appearance="secondary" onClick={handleRunTest}>
-            {t`Run Test`}
+            {t`Run`}
           </VSCodeButton>
           <VSCodeButton appearance="secondary" onClick={handleClose}>
             {t`Close`}

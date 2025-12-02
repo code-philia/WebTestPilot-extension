@@ -25,19 +25,19 @@ msgstr ""
 #~ msgid "🟢 Connected"
 #~ msgstr "🟢 Connected"
 
-#: src/components/ActionList.tsx:89
+#: src/components/ActionList.tsx:90
 msgid "Action"
 msgstr "Action"
 
-#: src/components/ActionList.tsx:189
+#: src/components/ActionList.tsx:190
 msgid "Actions"
 msgstr "Actions"
 
-#: src/components/ActionList.tsx:198
+#: src/components/ActionList.tsx:197
 msgid "Add Action"
 msgstr "Add Action"
 
-#: src/pages/EnvironmentEditor.tsx:210
+#: src/pages/EnvironmentEditor.tsx:207
 msgid "Add Variable"
 msgstr "Add Variable"
 
@@ -61,9 +61,9 @@ msgstr "Clear All Tabs"
 #~ msgid "Clear Finished"
 #~ msgstr "Clear Finished"
 
-#: src/pages/EnvironmentEditor.tsx:180
-#: src/pages/FixtureEditor.tsx:140
-#: src/pages/TestEditor.tsx:208
+#: src/pages/EnvironmentEditor.tsx:178
+#: src/pages/FixtureEditor.tsx:138
+#: src/pages/TestEditor.tsx:205
 msgid "Close"
 msgstr "Close"
 
@@ -88,7 +88,7 @@ msgstr "Connecting to browser..."
 #~ msgid "Current URL"
 #~ msgstr "Current URL"
 
-#: src/pages/EnvironmentEditor.tsx:264
+#: src/pages/EnvironmentEditor.tsx:260
 msgid "Delete"
 msgstr "Delete"
 
@@ -134,7 +134,7 @@ msgstr "Edit Test: {0}"
 #~ msgid "Elapsed"
 #~ msgstr "Elapsed"
 
-#: src/pages/EnvironmentEditor.tsx:187
+#: src/pages/EnvironmentEditor.tsx:185
 msgid "Environment Name"
 msgstr "Environment Name"
 
@@ -142,11 +142,11 @@ msgstr "Environment Name"
 msgid "Environment name is required"
 msgstr "Environment name is required"
 
-#: src/pages/EnvironmentEditor.tsx:207
+#: src/pages/EnvironmentEditor.tsx:205
 msgid "Environment Variables"
 msgstr "Environment Variables"
 
-#: src/components/ActionList.tsx:115
+#: src/components/ActionList.tsx:116
 msgid "Expected result"
 msgstr "Expected result"
 
@@ -154,11 +154,11 @@ msgstr "Expected result"
 msgid "Failed"
 msgstr "Failed"
 
-#: src/pages/TestEditor.tsx:241
+#: src/pages/TestEditor.tsx:238
 msgid "Fixture"
 msgstr "Fixture"
 
-#: src/pages/FixtureEditor.tsx:147
+#: src/pages/FixtureEditor.tsx:145
 msgid "Fixture Name"
 msgstr "Fixture Name"
 
@@ -166,15 +166,15 @@ msgstr "Fixture Name"
 msgid "Fixture name is required"
 msgstr "Fixture name is required"
 
-#: src/components/ActionList.tsx:189
+#: src/components/ActionList.tsx:190
 msgid "From fixture"
 msgstr "From fixture"
 
-#: src/components/ActionList.tsx:193
+#: src/components/ActionList.tsx:194
 msgid "Hide"
 msgstr "Hide"
 
-#: src/pages/TestEditor.tsx:235
+#: src/pages/TestEditor.tsx:232
 msgid "https://example.com"
 msgstr "https://example.com"
 
@@ -190,27 +190,27 @@ msgstr "Loading..."
 #~ msgid "Logs"
 #~ msgstr "Logs"
 
-#: src/pages/EnvironmentEditor.tsx:194
+#: src/pages/EnvironmentEditor.tsx:192
 msgid "My Environment"
 msgstr "My Environment"
 
-#: src/pages/FixtureEditor.tsx:154
+#: src/pages/FixtureEditor.tsx:152
 msgid "My Fixture"
 msgstr "My Fixture"
 
-#: src/pages/TestEditor.tsx:222
+#: src/pages/TestEditor.tsx:219
 msgid "My Test"
 msgstr "My Test"
 
-#: src/components/ActionList.tsx:207
+#: src/components/ActionList.tsx:205
 msgid "No actions defined in fixtures."
 msgstr "No actions defined in fixtures."
 
-#: src/components/ActionList.tsx:208
+#: src/components/ActionList.tsx:206
 msgid "No actions defined. Click \"Add Action\" to get started."
 msgstr "No actions defined. Click \"Add Action\" to get started."
 
-#: src/pages/TestEditor.tsx:248
+#: src/pages/TestEditor.tsx:245
 msgid "No Fixture"
 msgstr "No Fixture"
 
@@ -218,7 +218,7 @@ msgstr "No Fixture"
 #~ msgid "No updates yet"
 #~ msgstr "No updates yet"
 
-#: src/pages/EnvironmentEditor.tsx:226
+#: src/pages/EnvironmentEditor.tsx:223
 msgid "No variables defined. Click \"Add Variable\" to create one."
 msgstr "No variables defined. Click \"Add Variable\" to create one."
 
@@ -238,31 +238,39 @@ msgstr "Parallel tests for folder:"
 msgid "Passed"
 msgstr "Passed"
 
-#: src/pages/EnvironmentEditor.tsx:261
+#: src/pages/EnvironmentEditor.tsx:258
 msgid "Remove variable"
 msgstr "Remove variable"
 
-#: src/pages/TestEditor.tsx:204
-msgid "Run Test"
-msgstr "Run Test"
+#: src/pages/TestEditor.tsx:202
+msgid "Run"
+msgstr "Run"
+
+#: src/pages/TestEditor.tsx:202
+#~ msgid "Run Test"
+#~ msgstr "Run Test"
 
 #: src/components/TestSummary.tsx:26
 msgid "Running"
 msgstr "Running"
 
-#: src/pages/EnvironmentEditor.tsx:176
+#: src/pages/TestEditor.tsx:199
+msgid "Save"
+msgstr "Save"
+
+#: src/pages/EnvironmentEditor.tsx:175
 msgid "Save Environment"
 msgstr "Save Environment"
 
-#: src/pages/FixtureEditor.tsx:136
+#: src/pages/FixtureEditor.tsx:135
 msgid "Save Fixture"
 msgstr "Save Fixture"
 
-#: src/pages/TestEditor.tsx:200
-msgid "Save Test"
-msgstr "Save Test"
+#: src/pages/TestEditor.tsx:199
+#~ msgid "Save Test"
+#~ msgstr "Save Test"
 
-#: src/components/ActionList.tsx:193
+#: src/components/ActionList.tsx:194
 msgid "Show"
 msgstr "Show"
 
@@ -312,7 +320,7 @@ msgstr "Tab #"
 #~ msgid "Test finished"
 #~ msgstr "Test finished"
 
-#: src/pages/TestEditor.tsx:215
+#: src/pages/TestEditor.tsx:212
 msgid "Test Name"
 msgstr "Test Name"
 
@@ -336,23 +344,23 @@ msgstr "Total Tests"
 #~ msgid "Unknown Page"
 #~ msgstr "Unknown Page"
 
-#: src/pages/TestEditor.tsx:228
+#: src/pages/TestEditor.tsx:225
 msgid "URL"
 msgstr "URL"
 
-#: src/pages/EnvironmentEditor.tsx:254
+#: src/pages/EnvironmentEditor.tsx:251
 msgid "value"
 msgstr "value"
 
-#: src/pages/EnvironmentEditor.tsx:218
+#: src/pages/EnvironmentEditor.tsx:215
 msgid "Value"
 msgstr "Value"
 
-#: src/pages/EnvironmentEditor.tsx:217
+#: src/pages/EnvironmentEditor.tsx:214
 msgid "Variable"
 msgstr "Variable"
 
-#: src/pages/EnvironmentEditor.tsx:243
+#: src/pages/EnvironmentEditor.tsx:240
 msgid "VARIABLE_NAME"
 msgstr "VARIABLE_NAME"
 
