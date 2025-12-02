@@ -86,9 +86,13 @@ export class WebTestPilotTreeItem extends vscode.TreeItem {
     }
 }
 
-export class WebTestPilotTreeDataProvider implements vscode.TreeDataProvider<WebTestPilotTreeItem> {
+export class WebTestPilotTreeDataProvider implements vscode.TreeDataProvider<WebTestPilotTreeItem>, vscode.TreeDragAndDropController<WebTestPilotTreeItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<WebTestPilotTreeItem | undefined | null | void> = new vscode.EventEmitter<WebTestPilotTreeItem | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<WebTestPilotTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
+
+    // Drag and drop controller properties
+    readonly dropMimeTypes: string[] = ['application/vnd.code.webtestpilot'];
+    readonly dragMimeTypes: string[] = ['application/vnd.code.webtestpilot'];
 
     private items: WebTestPilotDataItem[] = [];
     private fileSystemService: FileSystemService;
@@ -117,6 +121,52 @@ export class WebTestPilotTreeDataProvider implements vscode.TreeDataProvider<Web
 
         this.fileSystemService = new FileSystemService(workspaceRoot, this.loadType);
         this.initialize();
+    }
+
+    // --- Drag and Drop handlers ---
+    async handleDrag(source: WebTestPilotTreeItem[], dataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
+        try {
+            const paths = source.map(s => s.item.fullPath).filter(Boolean);
+            dataTransfer.set('application/vnd.code.webtestpilot', new vscode.DataTransferItem(JSON.stringify(paths)));
+        } catch (error) {
+            console.error('handleDrag error:', error);
+        }
+    }
+
+    async handleDrop(target: WebTestPilotTreeItem | undefined, dataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
+        try {
+            const transfer = dataTransfer.get('application/vnd.code.webtestpilot');
+            if (!transfer) {return;}
+
+            const raw = await transfer.asString();
+            const paths: string[] = JSON.parse(raw || '[]');
+
+            // Determine destination folder path
+            let targetFolderPath: string | undefined = undefined;
+            if (target) {
+                if (target.item.type === 'folder') {
+                    targetFolderPath = target.item.fullPath;
+                } else {
+                    // If target is an item (test/fixture/environment), drop into its parent folder
+                    targetFolderPath = (target.item.parentId && typeof target.item.parentId === 'string' && !POSSIBLE_MENU_IDS.includes(target.item.parentId as any)) ? target.item.parentId as string : undefined;
+                }
+            }
+
+            const isCopy = !!dataTransfer.get('vscode-dnd-copy');
+
+            for (const p of paths) {
+                if (isCopy) {
+                    await this.fileSystemService.duplicateItem(p, targetFolderPath);
+                } else {
+                    await this.fileSystemService.moveItem(p, targetFolderPath);
+                }
+            }
+
+            await this.loadFromFileSystem();
+        } catch (error) {
+            console.error('handleDrop error:', error);
+            vscode.window.showErrorMessage(`Drag & drop failed: ${error instanceof Error ? error.message : String(error)}`);
+        }
     }
 
     private async initialize(): Promise<void> {

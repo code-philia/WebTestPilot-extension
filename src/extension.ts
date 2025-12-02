@@ -30,16 +30,19 @@ export function activate(context: vscode.ExtensionContext) {
     // Register tree views
     const treeTestView = vscode.window.createTreeView('webtestpilot.treeView', {
         treeDataProvider: treeTestDataProvider,
-        showCollapseAll: true
+        showCollapseAll: true,
+        dragAndDropController: treeTestDataProvider
     });
     const treeFixtureView = vscode.window.createTreeView('webtestpilot.treeFixtureView', {
         treeDataProvider: treeFixtureDataProvider,
-        showCollapseAll: true
+        showCollapseAll: true,
+        dragAndDropController: treeFixtureDataProvider
     });
     const treeEnvironmentView = vscode.window.createTreeView('webtestpilot.treeEnvironmentView', {
         treeDataProvider: treeEnvironmentDataProvider,
         showCollapseAll: true,
-        manageCheckboxStateManually: true
+        manageCheckboxStateManually: true,
+        dragAndDropController: treeEnvironmentDataProvider
     });
 
     // Store tree data provider and extensionUri globally for parallel runner access
@@ -291,6 +294,44 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
+    const duplicateItemCommand = vscode.commands.registerCommand('webtestpilot.duplicateItem', async (treeItem: WebTestPilotTreeItem) => {
+        if (treeItem.item.type !== 'test' && treeItem.item.type !== 'fixture' && treeItem.item.type !== 'environment') {
+            vscode.window.showWarningMessage('Can only duplicate test cases, fixtures, or environments');
+            return;
+        }
+
+        try {
+            // Determine parent folder for duplication
+            let targetFolderPath: string | undefined;
+            const parentId = treeItem.item.parentId;
+            if (parentId && typeof parentId === 'string' && !['test', 'fixture', 'environment'].includes(parentId)) {
+                targetFolderPath = parentId;
+            }
+
+            // Get the appropriate data provider based on item type
+            let provider: WebTestPilotTreeDataProvider;
+            switch (treeItem.item.type) {
+            case 'test':
+                provider = treeTestDataProvider;
+                break;
+            case 'fixture':
+                provider = treeFixtureDataProvider;
+                break;
+            case 'environment':
+                provider = treeEnvironmentDataProvider;
+                break;
+            }
+
+            // Duplicate the item in the same folder
+            await provider['fileSystemService'].duplicateItem(treeItem.item.fullPath, targetFolderPath);
+            await provider.refresh();
+
+            vscode.window.showInformationMessage(`Duplicated ${treeItem.item.type}: ${treeItem.item.name}`);
+        } catch (error) {
+            vscode.window.showErrorMessage(`Failed to duplicate: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    });
+
     // Add all disposables to context
     context.subscriptions.push(
         treeTestView,
@@ -314,6 +355,7 @@ export function activate(context: vscode.ExtensionContext) {
         runFolderCommand,
         setWorkspaceRootCommand,
         showWorkspaceRootCommand,
+        duplicateItemCommand,
         treeTestDataProvider,
         treeFixtureDataProvider,
         treeEnvironmentDataProvider

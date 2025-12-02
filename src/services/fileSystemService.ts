@@ -199,6 +199,48 @@ export class FileSystemService {
         await fs.rm(folderPath, { recursive: true, force: true });
     }
 
+    async moveItem(sourcePath: string, targetFolderPath?: string): Promise<void> {
+        const fileName = path.basename(sourcePath);
+        const dest = targetFolderPath ? path.join(targetFolderPath, fileName) :
+            (this.loadType === TEST_MENU_ID ? path.join(this.testsDir, fileName)
+                : this.loadType === FIXTURE_MENU_ID ? path.join(this.fixturesDir, fileName)
+                    : path.join(this.envDir, fileName));
+
+        try {
+            await fs.rename(sourcePath, dest);
+        } catch (error) {
+            console.error('Failed to move item:', error);
+            throw error;
+        }
+    }
+
+    async duplicateItem(sourcePath: string, targetFolderPath?: string): Promise<string> {
+        // Read the source file, generate a new id and filename, then write to destination
+        try {
+            const content = await fs.readFile(sourcePath, 'utf-8');
+            const data = JSON.parse(content);
+
+            // Assign a new id and optionally modify name
+            const newId = generateId(this.loadType);
+            data.id = newId;
+            if (data.name) {
+                data.name = `${data.name} (copy)`;
+            }
+
+            const newFileName = this.generateTestFileName(data.name || `copy_${newId}`);
+            const dest = targetFolderPath ? path.join(targetFolderPath, newFileName) :
+                (this.loadType === TEST_MENU_ID ? path.join(this.testsDir, newFileName)
+                    : this.loadType === FIXTURE_MENU_ID ? path.join(this.fixturesDir, newFileName)
+                        : path.join(this.envDir, newFileName));
+
+            await fs.writeFile(dest, JSON.stringify(data, null, 2), 'utf-8');
+            return dest;
+        } catch (error) {
+            console.error('Failed to duplicate item:', error);
+            throw error;
+        }
+    }
+
     async updateTest(testPath: string, testItem: TestItem): Promise<void> {
         await this.writeTestFile(testPath, testItem);
     }
