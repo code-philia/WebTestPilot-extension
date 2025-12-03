@@ -44,6 +44,15 @@ export class TestEngineService {
         const selectedEnv = environmentService?.getSelectedEnvironment?.();
         const environmentFilePath = selectedEnv?.fullPath;
         
+        // Generate cache path: .webtestpilot/.cache/{testId}.json
+        const workspaceRoot = WorkspaceRootService.getOpenedFolderWorkspaceRoot();
+        const cachePath = path.join(
+            workspaceRoot,
+            ".webtestpilot",
+            ".cache",
+            `${testItem.id}.json`
+        );
+        
         // Fallback to "Scripts" if "bin" does not exist (Windows)
         let pythonPath = path.join(
             this.TEST_ENGINE_PATH,
@@ -111,6 +120,9 @@ export class TestEngineService {
 
         // Add target-id as required parameter
         args.push('--target-id', targetId);
+        
+        // Add cache path
+        args.push('--cache-path', cachePath);
         
         // Add any extra args
         if (extraArgs && extraArgs.length > 0) {

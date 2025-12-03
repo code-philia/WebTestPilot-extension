@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { TreeItem as WebTestPilotDataItem, TestItem, FolderItem, MenuItem, FixtureItem, EnvironmentItem, POSSIBLE_MENU_IDS, POSSIBLE_MENUS, TEST_MENU_ID, FIXTURE_MENU_ID, ENV_MENU_ID } from './models';
 import { FileSystemService } from './services/fileSystemService';
 import { EnvironmentService } from './services/environmentService';
+import { WorkspaceRootService } from './services/workspaceRootService';
 
 export class WebTestPilotTreeItem extends vscode.TreeItem {
     constructor(
@@ -114,7 +115,7 @@ export class WebTestPilotTreeDataProvider implements vscode.TreeDataProvider<Web
             });
         }
         
-        const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+        const workspaceRoot = WorkspaceRootService.getOpenedFolderWorkspaceRoot();
         if (!workspaceRoot) {
             throw new Error('No workspace folder found');
         }
