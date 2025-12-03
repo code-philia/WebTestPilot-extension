@@ -332,6 +332,11 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
+    const clearCacheCommand = vscode.commands.registerCommand('webtestpilot.clearCache', async () => {
+        await treeTestDataProvider['fileSystemService'].clearCache();
+        vscode.window.showInformationMessage('Cache cleared!');
+    });
+
     // Add all disposables to context
     context.subscriptions.push(
         treeTestView,
@@ -356,6 +361,7 @@ export function activate(context: vscode.ExtensionContext) {
         setWorkspaceRootCommand,
         showWorkspaceRootCommand,
         duplicateItemCommand,
+        clearCacheCommand,
         treeTestDataProvider,
         treeFixtureDataProvider,
         treeEnvironmentDataProvider

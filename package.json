@@ -115,6 +115,15 @@
       {
         "command": "webtestpilot.showWorkspaceRoot",
         "title": "WebTestPilot: Show Workspace Root"
+      },
+      {
+        "command": "webtestpilot.duplicateItem",
+        "title": "Duplicate"
+      },
+      {
+        "command": "webtestpilot.clearCache",
+        "title": "Clear Cache",
+        "icon": "$(trash)"
       }
     ],
     "views": {
@@ -166,6 +175,11 @@
           "command": "webtestpilot.createEnvironment",
           "when": "view == webtestpilot.treeEnvironmentView",
           "group": "navigation"
+        },
+        {
+          "command": "webtestpilot.clearCache",
+          "when": "view == webtestpilot.treeView",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
@@ -198,6 +212,11 @@
           "command": "webtestpilot.deleteItem",
           "when": "view == webtestpilot.treeFixtureView || view == webtestpilot.treeEnvironmentView",
           "group": "inline@1"
+        },
+        {
+          "command": "webtestpilot.duplicateItem",
+          "when": "view == webtestpilot.treeView || view == webtestpilot.treeFixtureView || view == webtestpilot.treeEnvironmentView",
+          "group": "2_duplicate@1"
         }
       ]
     },

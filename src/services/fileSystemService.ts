@@ -10,6 +10,7 @@ export class FileSystemService {
     private fixturesDir: string;
     private envDir: string;
     private testsDir: string;
+    private cacheDir: string;
     private fileWatcher: vscode.FileSystemWatcher | undefined;
     private readonly loadType: POSSIBLE_MENUS;
 
@@ -19,6 +20,7 @@ export class FileSystemService {
         this.testsDir = path.join(this.webTestPilotDir, '.test');
         this.fixturesDir = path.join(this.webTestPilotDir, '.fixture');
         this.envDir = path.join(this.webTestPilotDir, '.environment');
+        this.cacheDir = path.join(this.webTestPilotDir, '.cache');
     }
 
     async initialize(): Promise<void> {
@@ -371,6 +373,13 @@ export class FileSystemService {
         this.fileWatcher.onDidCreate(() => callback());
         this.fileWatcher.onDidDelete(() => callback());
         this.fileWatcher.onDidChange(() => callback());
+    }
+
+    async clearCache(): Promise<void> {
+        const files = await fs.readdir(this.cacheDir);
+        for (const file of files) {
+            await fs.unlink(path.join(this.cacheDir, file));
+        }
     }
 
     dispose(): void {
