@@ -44,13 +44,14 @@ export class TestEngineService {
         const selectedEnv = environmentService?.getSelectedEnvironment?.();
         const environmentFilePath = selectedEnv?.fullPath;
         
-        // Generate cache path: .webtestpilot/.cache/{testId}.json
+        // Generate cache path: .webtestpilot/.cache/{testId}/cache.json
         const workspaceRoot = WorkspaceRootService.getOpenedFolderWorkspaceRoot();
         const cachePath = path.join(
             workspaceRoot,
             ".webtestpilot",
             ".cache",
-            `${testItem.id}.json`
+            `${testItem.id}`,
+            `cache.json`
         );
         
         // Fallback to "Scripts" if "bin" does not exist (Windows)
