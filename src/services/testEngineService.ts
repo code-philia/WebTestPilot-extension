@@ -74,7 +74,6 @@ export class TestEngineService {
 
         const cliScriptPath = path.join(
             this.TEST_ENGINE_PATH,
-            "src",
             "cli.py"
         );
         const configPath = path.join(
