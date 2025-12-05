@@ -22,6 +22,7 @@ Setup testcases in your own project folder.
 - If you use VSCode, read from [2. VSCode](#2-vscode), if Trae, read from [3. Trae](#3-trae)
 
 ### 2. VSCode
+🎥 Video tutorial: [VSCode Install WebTestPilot MCP Server](https://www.bilibili.com/video/BV1ew2EBoEdh/?share_source=copy_web&vd_source=c4c62d686720518c33920374c1f88c4c).
 
 #### 2.1. Add MCP to VSCode
 Steps to add MCP Server to vscode:
@@ -37,7 +38,7 @@ uvx --refresh --env-file "/path/to/folder/WebTestPilot-extension/.env" --from "g
 
 For more details: [Use MCP servers in VSCode](https://code.visualstudio.com/docs/copilot/customization/mcp-servers#_add-an-mcp-server).
 
-**Common errors:** If VSCode can't find uvx:
+**⚠️ Common errors:** If VSCode can't find uvx:
 
 1. Use `which uvx` to get the path and copy it.
 ```bash
@@ -70,14 +71,14 @@ which uvx
 - Check if MCP tools are available in Copilot, if yes, good to go!.
 ![image](./docs/assets/vscode-mcp-tool.png)
 
-- Try asking "list gui tests" or "run a gui test".
+- Try asking "list gui tests" or "run test invalid phone number on prod".
 - When encounter "Allow" prompt, choose "Always allow tools from WebTestPilot ᕦ(ò_óˇ)ᕤ".
 ![image](./docs/assets/vscode-mcp-always-allow.png)
 
 
 ### 3. Trae
 
-Video tutorial: [Trae Install WebTestPilot MCP Server](https://www.bilibili.com/video/BV1N925BiEZ9/?share_source=copy_web&vd_source=c4c62d686720518c33920374c1f88c4c).
+🎥 Video tutorial: [Trae Install WebTestPilot MCP Server](https://www.bilibili.com/video/BV1N925BiEZ9/?share_source=copy_web&vd_source=c4c62d686720518c33920374c1f88c4c).
 
 #### 3.1 Add MCP Server to Trae
 1. Go to Trae Settings.
@@ -108,4 +109,4 @@ Video tutorial: [Trae Install WebTestPilot MCP Server](https://www.bilibili.com/
 - Choose agent: "Builder with MCP".
 - Sample questions:
   - "list out gui tests i have"
-  - "run invalid phone number on prod"
+  - "run test invalid phone number on prod"
