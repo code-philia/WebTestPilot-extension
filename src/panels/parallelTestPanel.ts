@@ -381,7 +381,7 @@ export class ParallelTestPanel {
     /**
      * Parse step updates from Python process output for a specific test
      */
-    private _parseStepUpdates(testId: string, text: string) {
+    private async _parseStepUpdates(testId: string, text: string) {
         const execution = this._executions.get(testId);
         if (!execution) {
             return;
@@ -463,6 +463,10 @@ export class ParallelTestPanel {
                     out.appendLine(`Bug reported: ${ev.message}`);
                 }
                 this._outputChannel.appendLine(`[${testId}] Bug reported: ${ev.message}`);
+            } else if (ev.type === 'newTab') {
+                // A new tab/popup was opened - switch screencast to the new tab
+                this._outputChannel.appendLine(`[${testId}] New tab opened with targetId: ${ev.targetId}`);
+                await this._switchScreencastToNewTab(testId, ev.targetId);
             }
         }
     }
@@ -470,8 +474,66 @@ export class ParallelTestPanel {
     private async _stopScreencast(testId: string) {
         const client = this._screencastClients.get(testId);
         if (client) {
-            await client.send('Page.stopScreencast');
+            try {
+                await client.send('Page.stopScreencast');
+            } catch (e) {
+                // Ignore errors when stopping screencast (tab may already be closed)
+            }
             this._screencastClients.delete(testId);
+        }
+    }
+
+    /**
+     * Switches the screencast to a new tab (e.g., when a popup opens)
+     */
+    private async _switchScreencastToNewTab(testId: string, newTargetId: string) {
+        if (!this._context) {
+            this._outputChannel.appendLine(`[${testId}] Cannot switch screencast: no browser context`);
+            return;
+        }
+
+        // Stop the current screencast for this test
+        await this._stopScreencast(testId);
+
+        // Find the page with the new target ID
+        const pages = this._context.pages();
+        let newPage: Page | undefined;
+
+        for (const page of pages) {
+            try {
+                const cdp = await this._context.newCDPSession(page);
+                const info = await cdp.send('Target.getTargetInfo');
+                if (info.targetInfo.targetId === newTargetId) {
+                    newPage = page;
+                    break;
+                }
+            } catch (e) {
+                // Skip pages that can't be queried
+            }
+        }
+
+        if (newPage) {
+            // Update the execution's page reference and target ID
+            const execution = this._executions.get(testId);
+            if (execution) {
+                execution.page = newPage;
+                execution.targetId = newTargetId;
+            }
+            this._targetIdMap.set(testId, newTargetId);
+
+            // Start streaming from the new page
+            this._outputChannel.appendLine(`[${testId}] Switching screencast to new tab: ${newTargetId}`);
+            await this._startScreenshotStream(testId, newPage);
+
+            // Notify UI about the tab switch
+            this._panel.webview.postMessage({
+                type: 'tabSwitched',
+                testId: testId,
+                newTargetId: newTargetId,
+                url: newPage.url()
+            });
+        } else {
+            this._outputChannel.appendLine(`[${testId}] Could not find page with targetId: ${newTargetId}`);
         }
     }
 
@@ -482,6 +544,10 @@ export class ParallelTestPanel {
         assert(this._context, 'Browser context should be defined');
 
         const client = await this._context.newCDPSession(page);
+        
+        // Store the client so we can stop it later
+        this._screencastClients.set(testId, client);
+        
         await client.send('Page.startScreencast', {
             format: 'jpeg',
             quality: 60,

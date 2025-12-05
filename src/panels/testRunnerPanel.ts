@@ -463,7 +463,7 @@ export class TestRunnerPanel {
     /**
     * Parse step updates from Python process output
     */
-    private _parseStepUpdates(text: string) {
+    private async _parseStepUpdates(text: string) {
         assert(this._progress, "Progress object should be defined");
 
         const events = parseLogEvents(text);
@@ -511,6 +511,10 @@ export class TestRunnerPanel {
                 message = `Bug reported: ${ev.message}`;
                 payload.currentAction = message;
                 vscode.window.showErrorMessage(message);
+            } else if (ev.type === "newTab") {
+                // A new tab/popup was opened - switch screencast to the new tab
+                console.log(`New tab opened with targetId: ${ev.targetId}`);
+                await this._switchScreencastToNewTab(ev.targetId);
             } else if (ev.type === "locating" || ev.type === "abstract") {
                 message = ev.raw;
                 payload.currentAction = ev.raw;
@@ -533,6 +537,67 @@ export class TestRunnerPanel {
                     this._panel.webview.postMessage(payload);
                 }
             }
+        }
+    }
+
+    /**
+     * Switches the screencast to a new tab (e.g., when a popup opens)
+     */
+    private async _switchScreencastToNewTab(newTargetId: string) {
+        if (!this._context) {
+            console.error("Cannot switch screencast: no browser context");
+            return;
+        }
+
+        // Stop the current screencast
+        if (this._cdpSession) {
+            try {
+                await this._cdpSession.send('Page.stopScreencast');
+            } catch (e) {
+                // Ignore errors when stopping screencast (tab may already be closed)
+            }
+        }
+
+        // Find the page with the new target ID
+        const pages = this._context.pages();
+        let newPage: Page | undefined;
+
+        for (const page of pages) {
+            try {
+                const cdp = await this._context.newCDPSession(page);
+                const info = await cdp.send('Target.getTargetInfo');
+                if (info.targetInfo.targetId === newTargetId) {
+                    newPage = page;
+                    break;
+                }
+            } catch (e) {
+                // Skip pages that can't be queried
+            }
+        }
+
+        if (newPage) {
+            // Update the page reference and target ID
+            this._page = newPage;
+            this._targetId = newTargetId;
+
+            // Start streaming from the new page
+            console.log(`Switching screencast to new tab: ${newTargetId}`);
+            await this._startWebcastStream();
+
+            // Notify UI about the tab switch
+            this._panel.webview.postMessage({
+                type: 'tabSwitched',
+                newTargetId: newTargetId,
+                url: newPage.url()
+            });
+
+            // Update navigation info
+            this._panel.webview.postMessage({
+                type: "navigation",
+                url: newPage.url(),
+            });
+        } else {
+            console.error(`Could not find page with targetId: ${newTargetId}`);
         }
     }
 

@@ -21,6 +21,11 @@ export type LogEvent =
       raw?: string;
     }
     | {
+      type: "newTab";
+      targetId: string;
+      raw?: string;
+    }
+    | {
         type: "locating",
         raw: string;
     } 
@@ -175,6 +180,13 @@ export function parseLogEvents(text: string): LogEvent[] {
         m = line.match(/Bug reported:\s*(.+)$/);
         if (m) {
             events.push({ type: "bug", message: m[1].trim(), raw: line });
+            continue;
+        }
+
+        // NEW_TAB_OPENED: targetId - for popup/new tab handling
+        m = line.match(/NEW_TAB_OPENED:\s*(.+)$/);
+        if (m) {
+            events.push({ type: "newTab", targetId: m[1].trim(), raw: line });
             continue;
         }
     }
