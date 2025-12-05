@@ -77,6 +77,8 @@ which uvx
 
 ### 3. Trae
 
+Video tutorial: [Trae Install WebTestPilot MCP Server](https://www.bilibili.com/video/BV1N925BiEZ9/?share_source=copy_web&vd_source=c4c62d686720518c33920374c1f88c4c).
+
 #### 3.1 Add MCP Server to Trae
 1. Go to Trae Settings.
 2. Click MCP
