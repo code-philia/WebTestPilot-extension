@@ -1,28 +1,51 @@
-### Data setup
+# WebTestPilot MCP Server
+
+## Table of Contents
+
+- [WebTestPilot MCP Server](#webtestpilot-mcp-server)
+  - [Table of Contents](#table-of-contents)
+  - [Instructions](#instructions)
+    - [1. Add GUI test cases to your project](#1-add-gui-test-cases-to-your-project)
+    - [2. VSCode](#2-vscode)
+      - [2.1. Add MCP to VSCode](#21-add-mcp-to-vscode)
+      - [2.2. Test it out](#22-test-it-out)
+    - [3. Trae](#3-trae)
+      - [3.1 Add MCP Server to Trae](#31-add-mcp-server-to-trae)
+      - [3.2 Test it out](#32-test-it-out)
+
+## Instructions
+### 1. Add GUI test cases to your project
 Setup testcases in your own project folder.
-- Open your project (CTrip, 12306 clone).
-- Move the folder `./sample/.webtestpilot` to your project folder.
-- Open your project in VSCode/Trae.
-- Update your .env file with latest key.
+- Open your project (CTrip, 12306 clone) in VSCode / Trae.
+- Move the folder `./sample/.webtestpilot` from this repo to your project folder.
+- Update your .env file with latest keys.
+- If you use VSCode, read from [2. VSCode](#2-vscode), if Trae, read from [3. Trae](#3-trae)
 
-### VSCode
+### 2. VSCode
 
-#### Add MCP to VSCode
-How to add MCP Server to vscode:
-- Ctrl + Shift + P, Search for "MCP: Add server"
-- Choose stdio.
-- Input command `uvx --refresh --env-file "/path/to/folder/WebTestPilot-extension/.env" --from "git+https://github.com/code-philia/WebTestPilot@parallel#subdirectory=webtestpilot" webtestpilot-mcp`
-  - **NOTE:** make sure to modify your --env-file path.
-- Input Name: "WebTestPilot".
-- Choose Workspace.
+#### 2.1. Add MCP to VSCode
+Steps to add MCP Server to vscode:
+1. Ctrl + Shift + P, Search for "MCP: Add server"
+2. Choose stdio.
+3. Input command as below: (**NOTE:** Modify --env-file path to your computer.)
+```
+uvx --refresh --env-file "/path/to/folder/WebTestPilot-extension/.env" --from "git+https://github.com/code-philia/WebTestPilot@parallel#subdirectory=webtestpilot" webtestpilot-mcp
+```
+  
+4.  Input Name: "WebTestPilot".
+5.  Choose "Workspace" option.
 
-**NOTE:** in case vscode can't find uvx:
-First, use `which uvx` to get the path and copy it.
+For more details: [Use MCP servers in VSCode](https://code.visualstudio.com/docs/copilot/customization/mcp-servers#_add-an-mcp-server).
+
+**Common errors:** If VSCode can't find uvx:
+
+1. Use `which uvx` to get the path and copy it.
 ```bash
 which uvx
 > /Users/your-name/.local/bin/uvx
+> C://Users/your-name/uvx
 ```
-Second, create or open file `.vscode/mcp.json`, edit command to match.
+1. Create or open file `.vscode/mcp.json`, edit command to match.
 ```json
 {
 	"servers": {
@@ -43,25 +66,22 @@ Second, create or open file `.vscode/mcp.json`, edit command to match.
 }
 ```
 
-#### Test it out
-- Check if MCP tools are available in Copilot, if yes, good to go!. (Add more images)
-- Try asking `run a gui test` or `list gui tests`.
+#### 2.2. Test it out
+- Check if MCP tools are available in Copilot, if yes, good to go!.
+![image](./docs/assets/vscode-mcp-tool.png)
+
+- Try asking "list gui tests" or "run a gui test".
 - When encounter "Allow" prompt, choose "Always allow tools from WebTestPilot ᕦ(ò_óˇ)ᕤ".
+![image](./docs/assets/vscode-mcp-always-allow.png)
 
-### Trae
-```bash
-uvx --version
-> 0.8.*, 0.9.*, ...
 
-uvx --refresh --env-file "/path/to/folder/WebTestPilot-extension/.env" --from "git+https://github.com/code-philia/WebTestPilot@parallel#subdirectory=webtestpilot" webtestpilot-mcp
-```
-**NOTE:** modify your --enf-file path.
+### 3. Trae
 
-#### Add MCP Server to Trae
-- Go to Trae Settings.
-- Click MCP
-- Add -> Add Manually
-- Input the following json (**NOTE:** Make sure to update .env paths accordingly)
+#### 3.1 Add MCP Server to Trae
+1. Go to Trae Settings.
+2. Click MCP
+3. Add -> Add Manually
+4. Input the following json (**NOTE:** Make sure to update .env paths accordingly)
 ```json
 {
   "mcpServers": {
@@ -79,10 +99,10 @@ uvx --refresh --env-file "/path/to/folder/WebTestPilot-extension/.env" --from "g
   }
 }
 ```
-- Click start button if needed.
-- Once started and can see list of tools. Good to go!
+5. Click start button if needed.
+6. Once started and can see list of tools. Good to go!
 
-#### Test it out
+#### 3.2 Test it out
 - Choose agent: "Builder with MCP".
 - Sample questions:
   - "list out gui tests i have"
