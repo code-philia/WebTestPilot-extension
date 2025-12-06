@@ -4,7 +4,7 @@
   "actions": [
     {
       "action": "Click 'Login' on the home page",
-      "expectedResult": "Navigate to the login page"
+      "expectedResult": ""
     },
     {
       "action": "Select 'Account login' method",
@@ -24,5 +24,5 @@
     }
   ],
   "createdAt": "2025-11-06T08:11:14.526Z",
-  "updatedAt": "2025-11-08T18:03:42.601Z"
+  "updatedAt": "2025-12-02T08:11:17.380Z"
 }

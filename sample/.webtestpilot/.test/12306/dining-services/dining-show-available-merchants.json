@@ -1,0 +1,37 @@
+{
+  "id": "test_miswekwo_0.q8035iprlsl",
+  "name": "显示可预订商家",
+  "url": "${12306_URL}",
+  "actions": [
+    {
+      "action": "点击“商务旅行服务”，然后从下拉菜单中点击“餐饮及特色产品”",
+      "expectedResult": "出现一个包含日期、列车车次、出发站和到达站输入框的搜索表单"
+    },
+    {
+      "action": "在车次框中输入G101",
+      "expectedResult": ""
+    },
+    {
+      "action": "点击乘车站输入框，然后选择\"北京\"",
+      "expectedResult": ""
+    },
+    {
+      "action": "点击到达站输入框 上海",
+      "expectedResult": ""
+    },
+    {
+      "action": "点击“搜索”，如有需要，请关闭登录页面。",
+      "expectedResult": "显示餐饮服务列表，部分已启用，部分已禁用"
+    },
+    {
+      "action": "保持在餐饮·特产搜索结果页",
+      "expectedResult": ""
+    },
+    {
+      "action": "勾选“仅显示可预订商家”",
+      "expectedResult": "列表刷新，仅展示状态为‘正常’的商家，不展示‘休息中’商家"
+    }
+  ],
+  "createdAt": "2025-12-05T00:00:00.000Z",
+  "updatedAt": "2025-12-05T00:00:00.000Z"
+}
