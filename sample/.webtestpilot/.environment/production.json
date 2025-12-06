@@ -1,5 +1,5 @@
 {
-  "id": "environment_mhkk6dxe_0.9dqp9pgzn49",
+  "id": "Production",
   "name": "Production",
   "environmentVariables": {
     "12306_PASSWORD": "PLACEHOLDER",

@@ -1,6 +1,6 @@
 {
-  "id": "test_misyuh82_0.zrqlmis90bp",
-  "name": "遗漏必填字段",
+  "id": "2.3.3 遗漏必填字段",
+  "name": "2.3.3 遗漏必填字段",
   "url": "${CTRIP_URL}",
   "actions": [
     {

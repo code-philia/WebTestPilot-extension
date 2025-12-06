@@ -1,6 +1,6 @@
 {
-  "id": "test_misyugsw_0.1wz9pcbfdme",
-  "name": "遗漏必填字段",
+  "id": "1.1.3 遗漏必填字段",
+  "name": "1.1.3 遗漏必填字段",
   "url": "${12306_URL}",
   "actions": [
     {

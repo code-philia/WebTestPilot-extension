@@ -1,6 +1,6 @@
 {
-  "id": "test_misyugsd_0.5exwfbnwh4a",
-  "name": "添加常用地址",
+  "id": "1.1.1 添加常用地址",
+  "name": "1.1.1 添加常用地址",
   "url": "${12306_URL}",
   "actions": [
     {

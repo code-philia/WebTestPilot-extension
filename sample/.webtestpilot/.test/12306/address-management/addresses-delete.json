@@ -1,6 +1,6 @@
 {
-  "id": "test_misyugsk_0.93a0ifr8tbw",
-  "name": "删除常用地址",
+  "id": "1.1.2 删除常用地址",
+  "name": "1.1.2 删除常用地址",
   "url": "${12306_URL}",
   "actions": [
     {

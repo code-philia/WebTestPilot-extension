@@ -1,6 +1,6 @@
 {
-  "id": "test_misweq5c_0.fj15j5cl5zh",
-  "name": "查看乘机流程",
+  "id": "2.1.2 查看乘机流程",
+  "name": "2.1.2 查看乘机流程",
   "url": "${CTRIP_URL}",
   "actions": [
     {

@@ -1,6 +1,6 @@
 {
-  "id": "test-1-1",
-  "name": "Disagree with terms",
+  "id": "2.4.1 Disagree with terms",
+  "name": "2.4.1 Disagree with terms",
   "url": "${CTRIP_URL}",
   "actions": [
     {

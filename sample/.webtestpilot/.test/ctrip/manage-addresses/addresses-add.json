@@ -1,6 +1,6 @@
 {
-  "id": "test_misyuh7o_0.1d73hbilikv",
-  "name": "添加常用地址",
+  "id": "2.3.1 添加常用地址",
+  "name": "2.3.1 添加常用地址",
   "url": "${CTRIP_URL}",
   "actions": [
     {

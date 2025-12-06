@@ -1,6 +1,6 @@
 {
-  "id": "test_misyuh7v_0.nd0vu9ro2tf",
-  "name": "删除常用地址",
+  "id": "2.3.2 删除常用地址",
+  "name": "2.3.2 删除常用地址",
   "url": "${CTRIP_URL}",
   "actions": [
     {

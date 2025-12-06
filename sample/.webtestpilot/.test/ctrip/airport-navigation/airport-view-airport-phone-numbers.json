@@ -1,6 +1,6 @@
 {
-  "id": "test_misweq5a_0.je5iah7eo5",
-  "name": "查看机场电话号码",
+  "id": "2.1.1 查看机场电话号码",
+  "name": "2.1.1 查看机场电话号码",
   "url": "${CTRIP_URL}",
   "actions": [
     {

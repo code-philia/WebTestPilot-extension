@@ -1,6 +1,6 @@
 {
-  "id": "test_misweq5d_0.u58xrz8ehko",
-  "name": "查看国内机场指南",
+  "id": "2.1.3 查看国内机场指南",
+  "name": "2.1.3 查看国内机场指南",
   "url": "${CTRIP_URL}",
   "actions": [
     {
