@@ -17,6 +17,7 @@
 ### 1. Add GUI test cases to your project
 Setup testcases in your own project folder.
 - Run `source setup.sh` or `powershell -ExecutionPolicy Bypass -File setup.ps1` again.
+- Start the browser by running: `source browser.sh` or `powershell -ExecutionPolicy Bypass -File browser.ps1`.
 - Open your project (CTrip, 12306 clone) in VSCode / Trae.
 - Move the folder `./sample/.webtestpilot` from this repo to your project folder `cp -r ./sample/.webtestpilot/ .../path/to/ctrip-clone/`. Your project should now look something like:
 ```
