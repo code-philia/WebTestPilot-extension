@@ -41,7 +41,7 @@
     },
     {
       "action": "点击“保存”",
-      "expectedResult": "显示“新增常用地址成功”"
+      "expectedResult": "显示“新常用地址成功!”"
     }
   ],
   "createdAt": "2025-12-05T00:00:00.000Z",
