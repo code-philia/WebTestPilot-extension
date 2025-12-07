@@ -37,7 +37,11 @@
     },
     {
       "action": "手机号码输入“155”",
-      "expectedResult": "提示“请输入正确的手机号码”"
+      "expectedResult": ""
+    },
+    {
+      "action": "点击保存按钮",
+      "expectedResult": "显示“请输入正确的手机号码”"
     }
   ],
   "createdAt": "2025-12-05T00:00:00.000Z",
