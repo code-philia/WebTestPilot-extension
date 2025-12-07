@@ -84,8 +84,9 @@ you will see this output and a chrome browser instance opened.
 ![choose-debugger-type](./docs/assets/choose-debugger-type.png)
 
 #### Open the Testcase Folder
-1. In the extension debug window (with the title of "[Extention Development Host]"), open the sample folder inside the WebTestPilot-extension folder.
-2. Press `Ctrl+Shift+P` and type "WebTestPilot: Set Workspace...", then select the WebTestPilot-extension folder.
+1. In the extension debug window (with the title of "[Extention Development Host]")
+2. Open the sample folder inside the WebTestPilot-extension folder.
+3. Press `Ctrl+Shift+P` and type "WebTestPilot: Set Workspace...", then select the WebTestPilot-extension folder.
 ![set-workspace](./docs/assets/set-workspace.png)
 ![choose-workspace](./docs/assets/choose-workspace.png)
 
