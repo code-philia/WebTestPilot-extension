@@ -1,6 +1,6 @@
 {
-  "id": "Local",
-  "name": "Local",
+  "id": "local",
+  "name": "local",
   "environmentVariables": {
     "12306_PASSWORD": "testtest",
     "12306_USERNAME": "minhnguyen",

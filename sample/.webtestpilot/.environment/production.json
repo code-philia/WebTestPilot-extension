@@ -1,6 +1,6 @@
 {
-  "id": "Production",
-  "name": "Production",
+  "id": "production",
+  "name": "production",
   "environmentVariables": {
     "12306_PASSWORD": "PLACEHOLDER",
     "12306_USERNAME": "PLACEHOLDER",
