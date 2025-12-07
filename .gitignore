@@ -25,3 +25,5 @@ node_modules
 archive
 media
 screenshots
+*.mp4
+*.webm

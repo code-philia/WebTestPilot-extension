@@ -32,10 +32,6 @@
       "expectedResult": "显示餐饮服务或食品列表。"
     },
     {
-      "action": "保持在餐饮·特产搜索结果页",
-      "expectedResult": ""
-    },
-    {
       "action": "勾选“仅显示可预订商家”",
       "expectedResult": "列表刷新后，所有项目均可点击。"
     }
