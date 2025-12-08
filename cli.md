@@ -9,6 +9,7 @@
 ```bash
 # Start the browser
 powershell -ExecutionPolicy Bypass -File browser.ps1
+source browser.sh
 
 # (Optional) if have not installed Playwright before
 npx install playwright
