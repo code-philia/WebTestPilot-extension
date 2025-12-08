@@ -28,5 +28,5 @@ uv run baml-cli generate
 Pop-Location
 
 Write-Host "Setting up VS Code extension..."
-yarn install:all
-yarn package
+pnpm install
+pnpm package
