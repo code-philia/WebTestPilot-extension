@@ -13,6 +13,8 @@
       - [3.1 Add MCP Server to Trae](#31-add-mcp-server-to-trae)
       - [3.2 Test it out](#32-test-it-out)
 
+Demo example of feedback loop from WTP MCP to drive development, [video link](https://www.bilibili.com/video/BV1Ks2RBmExL/)
+
 ## Instructions
 ### 1. Add GUI test cases to your project
 Setup testcases in your own project folder.

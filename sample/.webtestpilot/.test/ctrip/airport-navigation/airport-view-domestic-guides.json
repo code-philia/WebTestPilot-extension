@@ -13,11 +13,11 @@
     },
     {
       "action": "点击“机场指南”",
-      "expectedResult": "跳转到机场指南页面"
+      "expectedResult": "有一个用于“首都机场”的按钮。"
     },
     {
       "action": "点击北京首都机场",
-      "expectedResult": "页面标题应为“北京首都机场”"
+      "expectedResult": "页面显示了有关“北京首都机场”的详细信息。"
     }
   ],
   "createdAt": "2025-12-05T00:00:00.000Z",
