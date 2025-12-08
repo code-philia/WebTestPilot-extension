@@ -15,5 +15,5 @@ uv run baml-cli generate
 # Setup webview + extension
 echo "Setting up VS Code extension..."
 cd ../../
-yarn install:all
-yarn package
+pnpm install
+pnpm package
