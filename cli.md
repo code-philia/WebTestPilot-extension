@@ -6,6 +6,8 @@
 2. Make sure .env file in project folder have keys for OPENAI_QQ_API_KEY= and BAML_LOG=warn.
 3. Install CLI tool and try it.
 
+
+(These commands run on webtestpilot-extension folder)
 ```bash
 # Get latest code
 source setup.sh
