@@ -2,7 +2,7 @@
 
 ### Steps
 0. Open your project in VSCode or Trae.
-1. Download the .webtestpilot folder and put it in your project.
+1. Move the ./sample/.webtestpilot folder and put it in root of your project.
 2. Make sure .env file in project folder have keys for OPENAI_QQ_API_KEY= and BAML_LOG=warn.
 3. Install CLI tool and try it.
 
