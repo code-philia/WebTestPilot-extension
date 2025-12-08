@@ -38,6 +38,8 @@ gui-test 2.1.1 --env production
 ### Test on your own sites
 To test on local: First, check the values in environment `.webtestpilot/.environment/local.json`, make sure it points to the right localhost in your machine i.e. http://localhost:5173. Then run the CLI.
 
+You might need to make changes to the steps and expectations to fit your website's navigation.
+
 ```bash
 gui-test /ctrip/manage-addresses --env local
 ```
