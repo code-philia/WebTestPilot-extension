@@ -31,6 +31,7 @@ Further reads: learn more about [uv tool](https://docs.astral.sh/uv/guides/tools
 **NOTE:** Before running tests on real site, please login first (on the just-started browser).
 
 ```bash
+gui-test "1.1.1 添加常用地址" --env production
 gui-test /ctrip/manage-addresses --env production
 gui-test 2.1.1 --env production
 ```
