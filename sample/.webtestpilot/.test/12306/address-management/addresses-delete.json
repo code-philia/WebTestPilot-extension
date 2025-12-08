@@ -17,6 +17,10 @@
     },
     {
       "action": "点击“确定”",
+      "expectedResult": ""
+    },
+    {
+      "action": "点击“确定”",
       "expectedResult": "该条记录被删除，地址数少了一条"
     }
   ],
