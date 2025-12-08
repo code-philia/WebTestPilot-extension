@@ -7,9 +7,13 @@
 3. Install CLI tool and try it.
 
 ```bash
+# Get latest code
+source setup.sh
+powershell -ExecutionPolicy Bypass -File setup.ps1
+
 # Start the browser
-powershell -ExecutionPolicy Bypass -File browser.ps1
 source browser.sh
+powershell -ExecutionPolicy Bypass -File browser.ps1
 
 # (Optional) if have not installed Playwright before
 npx install playwright
