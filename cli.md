@@ -14,7 +14,9 @@ powershell -ExecutionPolicy Bypass -File browser.ps1
 npx install playwright
 
 uv tool install ieee-gui
+gui-test --help
 gui-test /ctrip/manage-addresses --env production
+gui-test 2.1.1 --env production
 ```
 
 ### Test on your own sites
