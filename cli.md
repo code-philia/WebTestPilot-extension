@@ -7,7 +7,12 @@
 3. Install CLI tool and try it.
 
 ```bash
+# Get latest code
+source setup.sh
+powershell -ExecutionPolicy Bypass -File setup.ps1
+
 # Start the browser
+source browser.sh
 powershell -ExecutionPolicy Bypass -File browser.ps1
 
 # (Optional) if have not installed Playwright before
@@ -42,3 +47,20 @@ In case of upgrades:
 ```bash
 uv tool upgrade ieee-gui
 ```
+
+
+### Tips
+DONTs:
+- Don't resize the browser.
+- Try to not interfere with the agent browser session.
+
+Login first if testing on real site for login-needed features.
+
+How to write easy to work actions and expectations? Be specific.
+- Good actions: be specific, if the agent still struggles, describe the element more (where it is, distinct features, ...).
+  - ✅ DOs: Click "City" dropdown, then choose "Shanghai" from dropdown list.
+  - ❌ DONTs: Fill out the form for me.
+- Good expectations: be specific and check for feature you are implementing, which element to look for, which message to look for, ... Avoid ambiguous expectations. Also it can be left empty.
+  - ✅ DOs: A flight page with search form, list of flights and ... shows up.
+  - ❌ DONTs: Correct flight page shows up.
+- Also try to use the same language used on the tested website. -> Leads to better screen understanding.
