@@ -1,4 +1,6 @@
-param()
+param(
+    [switch]$Headless
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -43,7 +45,12 @@ $chromePath = Get-ChromePath
 Write-Host 'Updating Chrome instances...'
 Get-Process -Name 'chrome' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 
-Write-Host "Starting Chrome in full screen with profile $profileDir..."
+if ($Headless) {
+    Write-Host "Starting Chrome in headless mode with profile $profileDir..."
+} else {
+    Write-Host "Starting Chrome in full screen with profile $profileDir..."
+}
+
 $chromeArgs = @(
     "--remote-debugging-port=$port",
     '--remote-debugging-address=0.0.0.0',
@@ -57,10 +64,15 @@ $chromeArgs = @(
     '--disable-geolocation',
     '--use-fake-ui-for-media-stream',
     "--window-size=$windowSize",
-    '--start-fullscreen',
     '--enable-logging',
     '--v=1'
 )
+
+if ($Headless) {
+    $chromeArgs += '--headless=new'
+} else {
+    $chromeArgs += '--start-fullscreen'
+}
 
 $chromeProcess = Start-Process -FilePath $chromePath -ArgumentList $chromeArgs -PassThru -RedirectStandardOutput $logPath -RedirectStandardError $errorLogPath
 Write-Host "Chrome PID: $($chromeProcess.Id)"
