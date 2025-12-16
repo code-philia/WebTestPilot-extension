@@ -53,8 +53,8 @@ For more details, refer to [original uv document](https://docs.astral.sh/uv/gett
 
 #### Setup Extension
 ```bash
-# If don't have yarn
-npm install --global yarn
+# If don't have pnpm
+npm install --global pnpm
 
 # MacOS / Linux / WSL
 source setup.sh
